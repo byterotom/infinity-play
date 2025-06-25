@@ -7,9 +7,7 @@ CREATE TABLE game (
     release_date DATE DEFAULT (DATE('now')) NOT NULL,
     likes INTEGER DEFAULT 0 NOT NULL,
     votes INTEGER DEFAULT 0 NOT NULL,
-    thumbnail_url TEXT NOT NULL,
-    gif_url TEXT NOT NULL,
-    game_url TEXT NOT NULL
+    game_url TEXT
 );
 
 -- tags table

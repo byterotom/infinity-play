@@ -6,17 +6,26 @@ package dbgen
 
 import (
 	"database/sql"
+	"time"
 )
 
 type Game struct {
-	ID           string
-	Name         string
-	Description  string
-	Technology   string
-	ReleaseDate  sql.NullTime
-	Likes        sql.NullInt64
-	Votes        sql.NullInt64
-	ThumbnailUrl string
-	GifUrl       string
-	GameUrl      string
+	ID          string
+	Name        string
+	Description string
+	Technology  string
+	ReleaseDate time.Time
+	Likes       int64
+	Votes       int64
+	GameUrl     sql.NullString
+}
+
+type GameTag struct {
+	GameID string
+	TagID  int64
+}
+
+type Tag struct {
+	TagID int64
+	Tag   string
 }

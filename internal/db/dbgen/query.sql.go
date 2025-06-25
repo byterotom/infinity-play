@@ -7,35 +7,30 @@ package dbgen
 
 import (
 	"context"
+	"database/sql"
 )
 
-const addOne = `-- name: AddOne :one
-INSERT INTO Game(
-    id,name,description,technology,thumbnail_url,gif_url,game_url
-) VALUES(
-    ?,?,?,?,?,?,?
-)
-RETURNING id, name, description, technology, release_date, likes, votes, thumbnail_url, gif_url, game_url
+const addGame = `-- name: AddGame :one
+INSERT INTO
+    Game(id, name, description, technology, game_url)
+VALUES
+    (?, ?, ?, ?, ?) RETURNING id, name, description, technology, release_date, likes, votes, game_url
 `
 
-type AddOneParams struct {
-	ID           string
-	Name         string
-	Description  string
-	Technology   string
-	ThumbnailUrl string
-	GifUrl       string
-	GameUrl      string
+type AddGameParams struct {
+	ID          string
+	Name        string
+	Description string
+	Technology  string
+	GameUrl     sql.NullString
 }
 
-func (q *Queries) AddOne(ctx context.Context, arg AddOneParams) (Game, error) {
-	row := q.db.QueryRowContext(ctx, addOne,
+func (q *Queries) AddGame(ctx context.Context, arg AddGameParams) (Game, error) {
+	row := q.db.QueryRowContext(ctx, addGame,
 		arg.ID,
 		arg.Name,
 		arg.Description,
 		arg.Technology,
-		arg.ThumbnailUrl,
-		arg.GifUrl,
 		arg.GameUrl,
 	)
 	var i Game
@@ -47,15 +42,39 @@ func (q *Queries) AddOne(ctx context.Context, arg AddOneParams) (Game, error) {
 		&i.ReleaseDate,
 		&i.Likes,
 		&i.Votes,
-		&i.ThumbnailUrl,
-		&i.GifUrl,
+		&i.GameUrl,
+	)
+	return i, err
+}
+
+const deleteById = `-- name: DeleteById :one
+DELETE FROM
+    Game
+where
+    id = ? RETURNING id, name, description, technology, release_date, likes, votes, game_url
+`
+
+func (q *Queries) DeleteById(ctx context.Context, id string) (Game, error) {
+	row := q.db.QueryRowContext(ctx, deleteById, id)
+	var i Game
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Description,
+		&i.Technology,
+		&i.ReleaseDate,
+		&i.Likes,
+		&i.Votes,
 		&i.GameUrl,
 	)
 	return i, err
 }
 
 const getAll = `-- name: GetAll :many
-SELECT id, name, description, technology, release_date, likes, votes, thumbnail_url, gif_url, game_url FROM Game
+SELECT
+    id, name, description, technology, release_date, likes, votes, game_url
+FROM
+    Game
 `
 
 func (q *Queries) GetAll(ctx context.Context) ([]Game, error) {
@@ -75,8 +94,6 @@ func (q *Queries) GetAll(ctx context.Context) ([]Game, error) {
 			&i.ReleaseDate,
 			&i.Likes,
 			&i.Votes,
-			&i.ThumbnailUrl,
-			&i.GifUrl,
 			&i.GameUrl,
 		); err != nil {
 			return nil, err
@@ -90,4 +107,20 @@ func (q *Queries) GetAll(ctx context.Context) ([]Game, error) {
 		return nil, err
 	}
 	return items, nil
+}
+
+const getIdByName = `-- name: GetIdByName :one
+SELECT
+    id
+FROM
+    Game
+WHERE
+    name = ?
+`
+
+func (q *Queries) GetIdByName(ctx context.Context, name string) (string, error) {
+	row := q.db.QueryRowContext(ctx, getIdByName, name)
+	var id string
+	err := row.Scan(&id)
+	return id, err
 }
