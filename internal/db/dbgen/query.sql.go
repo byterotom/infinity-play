@@ -50,7 +50,7 @@ func (q *Queries) AddGame(ctx context.Context, arg AddGameParams) (Game, error) 
 const deleteById = `-- name: DeleteById :one
 DELETE FROM
     Game
-where
+WHERE
     id = ? RETURNING id, name, description, technology, release_date, likes, votes, game_url
 `
 
@@ -107,6 +107,31 @@ func (q *Queries) GetAll(ctx context.Context) ([]Game, error) {
 		return nil, err
 	}
 	return items, nil
+}
+
+const getByName = `-- name: GetByName :one
+SELECT
+    id, name, description, technology, release_date, likes, votes, game_url
+FROM
+    Game
+WHERE
+    name = ?
+`
+
+func (q *Queries) GetByName(ctx context.Context, name string) (Game, error) {
+	row := q.db.QueryRowContext(ctx, getByName, name)
+	var i Game
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Description,
+		&i.Technology,
+		&i.ReleaseDate,
+		&i.Likes,
+		&i.Votes,
+		&i.GameUrl,
+	)
+	return i, err
 }
 
 const getIdByName = `-- name: GetIdByName :one

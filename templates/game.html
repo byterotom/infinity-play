@@ -1,0 +1,23 @@
+{{define "content"}}
+<div class="max-w-4xl mx-auto mt-8 px-4 space-y-6">
+
+    <!-- Game Title -->
+    <h1 class="text-3xl font-bold text-gray-800 text-center">
+        {{.Game.Name}}
+    </h1>
+
+    <!-- SWF Object -->
+    <div class="flex justify-center">
+        <object data="/game/file/{{.Game.ID}}" type="application/x-shockwave-flash" width="800" height="600"
+            class="rounded shadow-lg border border-gray-300">
+            Your browser does not support SWF files.
+        </object>
+    </div>
+
+    <!-- Game Description -->
+    <div class="text-gray-600 text-lg leading-relaxed">
+        <p>{{.Game.Description}}</p>
+    </div>
+
+</div>
+{{end}}

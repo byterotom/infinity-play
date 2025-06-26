@@ -69,3 +69,14 @@ func (r2 *R2) Delete(prefix string) error {
 	_, err := r2.client.DeleteObjects(context.TODO(), params)
 	return err
 }
+
+func (r2 *R2) Get(key string) (io.ReadCloser, error) {
+	params := &s3.GetObjectInput{
+		Bucket: &r2.bucketName,
+		Key:    &key,
+	}
+
+	obj, err := r2.client.GetObject(context.TODO(), params)
+	
+	return obj.Body, err
+}

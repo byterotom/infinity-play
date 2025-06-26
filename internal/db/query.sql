@@ -21,5 +21,13 @@ WHERE
 -- name: DeleteById :one
 DELETE FROM
     Game
-where
+WHERE
     id = ? RETURNING *;
+
+-- name: GetByName :one
+SELECT
+    *
+FROM
+    Game
+WHERE
+    name = ?;

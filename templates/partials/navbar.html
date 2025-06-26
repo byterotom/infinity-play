@@ -8,13 +8,17 @@
             <span>PLAY</span>
         </a>
 
-        <!-- Links -->
+        <!-- Links (Hardcoded) -->
         <div class="flex gap-2 text-sm">
-            {{ range .Categories }}
-            <a href="/category/{{ .Slug }}" class="px-2 py-1 rounded hover:bg-red-600">
-                {{ .Label }}
-            </a>
-            {{ end }}
+            <a href="/category/new" class="px-2 py-1 rounded hover:bg-red-600">NEW</a>
+            <a href="/category/popular" class="px-2 py-1 rounded hover:bg-red-600">POPULAR</a>
+            <a href="/category/action" class="px-2 py-1 rounded hover:bg-red-600">ACTION</a>
+            <a href="/category/racing" class="px-2 py-1 rounded hover:bg-red-600">RACING</a>
+            <a href="/category/shooting" class="px-2 py-1 rounded hover:bg-red-600">SHOOTING</a>
+            <a href="/category/sports" class="px-2 py-1 rounded hover:bg-red-600">SPORTS</a>
+            <a href="/category/strategy" class="px-2 py-1 rounded hover:bg-red-600">STRATEGY</a>
+            <a href="/category/puzzle" class="px-2 py-1 rounded hover:bg-red-600">PUZZLE</a>
+            <a href="/category/2-player" class="px-2 py-1 rounded hover:bg-red-600">2 PLAYER</a>
         </div>
 
         <!-- Search -->
@@ -22,9 +26,10 @@
             <input type="text" placeholder="Search Games"
                 class="bg-[#333] text-white text-sm px-3 rounded-l-full focus:outline-none" />
             <button
-                class="bg-red-500 hover:bg-red-400 text-white px-3 rounded-r-full transition-transform hover:scale-105">
-                🔍
+                class="flex items-center justify-center bg-red-500 hover:bg-red-400 text-white px-3 rounded-r-full transition-transform hover:scale-105">
+                <i class="material-icons text-base">search</i>
             </button>
+
         </div>
 
     </div>

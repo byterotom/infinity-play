@@ -6,6 +6,7 @@ import (
 	"database/sql"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 
 	"github.com/byterotom/infinity-play/internal/db/dbgen"
@@ -39,15 +40,16 @@ func (mux *GameMux) uploadGame(w http.ResponseWriter, r *http.Request) {
 		}
 		tx.Commit()
 	}()
-
 	arg.Name = r.FormValue("name")
 	arg.Description = r.FormValue("description")
 	arg.Technology = r.FormValue("technology")
 
 	var buf bytes.Buffer
 	if arg.Technology == "flash" {
-		file, _, _ := r.FormFile("game_file")
-
+		file, _, err := r.FormFile("game_file")
+		if err != nil {
+			return
+		}
 		tee := io.TeeReader(file, &buf)
 
 		arg.ID, err = pkg.HashWithReader(tee)
@@ -100,8 +102,65 @@ func (mux *GameMux) uploadGame(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (mux *GameMux) getGame(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "GAME PAGE!")
+func (mux *GameMux) getGameData(w http.ResponseWriter, r *http.Request) {
+	ctx := context.TODO()
+
+	var err error
+	defer func() {
+		if err != nil {
+			http.Error(w, err.Error(), 500)
+			return
+		}
+	}()
+
+	gameName := r.PathValue("game_name")
+
+	q := dbgen.New(mux.conn)
+
+	game, err := q.GetByName(ctx, gameName)
+	if err != nil {
+		return
+	}
+
+	data := struct {
+		Game dbgen.Game
+	}{
+		Game: game,
+	}
+
+	if r.Header.Get("HX-Request") == "true" {
+		err = mux.tmpl.ExecuteTemplate(w, "content", data)
+	} else {
+		err = mux.tmpl.ExecuteTemplate(w, "index", data)
+	}
+}
+
+func (mux *GameMux) getGameFile(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	defer func() {
+		if err != nil {
+			http.Error(w, err.Error(), 500)
+			return
+		}
+	}()
+
+	gameId := r.PathValue("game_id")
+
+	gameKey := fmt.Sprintf("%s/game_file.swf", gameId)
+	obj, err := mux.r2.Get(gameKey)
+	if err != nil {
+		return
+	}
+	defer obj.Close()
+
+	w.Header().Set("Content-Type", "application/x-shockwave-flash")
+	_, err = io.Copy(w, obj)
+
+	if err != nil {
+		log.Println("Stream error:", err)
+		return
+	}
 }
 
 func (mux *GameMux) deleteGame(w http.ResponseWriter, r *http.Request) {
