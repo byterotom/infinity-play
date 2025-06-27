@@ -11,6 +11,8 @@ import (
 
 	"github.com/byterotom/infinity-play/internal/db/dbgen"
 	"github.com/byterotom/infinity-play/pkg"
+	"github.com/byterotom/infinity-play/views"
+	"github.com/byterotom/infinity-play/views/components"
 )
 
 func (mux *GameMux) uploadGame(w http.ResponseWriter, r *http.Request) {
@@ -121,18 +123,7 @@ func (mux *GameMux) getGameData(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		return
 	}
-
-	data := struct {
-		Game dbgen.Game
-	}{
-		Game: game,
-	}
-
-	if r.Header.Get("HX-Request") == "true" {
-		err = mux.tmpl.ExecuteTemplate(w, "content", data)
-	} else {
-		err = mux.tmpl.ExecuteTemplate(w, "index", data)
-	}
+	views.Index(components.Game(&game)).Render(r.Context(), w)
 }
 
 func (mux *GameMux) getGameFile(w http.ResponseWriter, r *http.Request) {

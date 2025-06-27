@@ -1,0 +1,49 @@
+package components
+
+var navStyles = map[string]string{
+	"nav":           "bg-gray-900 shadow-lg border-b border-gray-700",
+	"container":     "max-w-7xl mx-auto px-4 flex items-center justify-between h-16",
+	"logo":          "flex flex-col leading-none text-white hover:text-red-400 transition-colors group",
+	"logoBrand":     "text-xl font-bold tracking-wide",
+	"logoSub":       "text-sm font-semibold tracking-wider text-red-400",
+	"navLinks":      "hidden md:flex space-x-1",
+	"navLink":       "px-3 py-2 text-sm font-semibold text-gray-300 hover:text-white hover:bg-gray-800 rounded transition-all",
+	"searchWrapper": "flex items-center bg-gray-800 rounded-full px-4 py-2 border border-gray-600 focus-within:border-red-400 transition-colors",
+	"searchInput":   "bg-transparent text-white placeholder-gray-400 text-sm w-40 focus:outline-none focus:w-52 transition-all",
+	"searchButton":  "ml-2 text-gray-400 hover:text-white transition-colors",
+	"searchIcon":    "w-4 h-4",
+}
+
+templ Navbar() {
+	<nav class={ navStyles["nav"] }>
+		<div class={ navStyles["container"] }>
+			<!-- Logo -->
+			<a href="/" class={ navStyles["logo"] }>
+				<span class={ navStyles["logoBrand"] }>INFINITY</span>
+				<span class={ navStyles["logoSub"] }>PLAY</span>
+			</a>
+			<!-- Navigation Links -->
+			<div class={ navStyles["navLinks"] }>
+				<a href="/category/new" class={ navStyles["navLink"] }>NEW</a>
+				<a href="/category/popular" class={ navStyles["navLink"] }>POPULAR</a>
+				<a href="/category/action" class={ navStyles["navLink"] }>ACTION</a>
+				<a href="/category/racing" class={ navStyles["navLink"] }>RACING</a>
+				<a href="/category/shooting" class={ navStyles["navLink"] }>SHOOTING</a>
+				<a href="/category/sports" class={ navStyles["navLink"] }>SPORTS</a>
+				<a href="/category/strategy" class={ navStyles["navLink"] }>STRATEGY</a>
+				<a href="/category/puzzle" class={ navStyles["navLink"] }>PUZZLE</a>
+				<a href="/category/io" class={ navStyles["navLink"] }>.IO</a>
+				<a href="/category/2-player" class={ navStyles["navLink"] }>2 PLAYER</a>
+			</div>
+			<!-- Search -->
+			<div class={ navStyles["searchWrapper"] }>
+				<input type="text" placeholder="Search Games" class={ navStyles["searchInput"] }/>
+				<button class={ navStyles["searchButton"] }>
+					<svg class={ navStyles["searchIcon"] } fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+					</svg>
+				</button>
+			</div>
+		</div>
+	</nav>
+}

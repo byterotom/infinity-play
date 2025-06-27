@@ -1,0 +1,120 @@
+package components
+
+import "github.com/byterotom/infinity-play/internal/db/dbgen"
+import "strings"
+import "fmt"
+
+templ Game(game *dbgen.Game) {
+	<div class="min-h-screen bg-gray-900 p-6">
+		<div class="max-w-4xl mx-auto">
+			<!-- Game Title -->
+			<div class="mb-6">
+				<h1 class="text-4xl font-bold text-white tracking-wide text-center">
+					{ strings.ToUpper(game.Name) }
+				</h1>
+			</div>
+			<!-- Game Container -->
+			<div class="bg-gray-800 rounded-lg shadow-2xl p-6 border border-gray-700">
+				<!-- Flash Object Container -->
+				<div class="flex justify-center mb-2" id="gameContainer">
+					<object
+						width="800"
+						height="600"
+						data={ fmt.Sprintf("/game/file/%s", game.ID) }
+						type="application/x-shockwave-flash"
+						class="border border-gray-600 rounded-lg shadow-lg"
+						id="gameObject"
+					>
+						<div class="w-[800px] h-[600px] bg-gray-700 rounded-lg flex items-center justify-center border border-gray-600">
+							<p class="text-gray-300 text-center px-4">
+								Flash content not supported. Please enable Flash or use a Flash-compatible browser.
+							</p>
+						</div>
+					</object>
+				</div>
+				<!-- Action Buttons - Below Screen, Bottom Right -->
+				<div class="flex justify-end mb-6">
+					<div class="flex space-x-2">
+						<!-- Like Button -->
+						<button class="p-2 bg-gray-700 hover:bg-green-600 text-gray-300 hover:text-white rounded-full transition-all duration-200 border border-gray-600 hover:border-green-500">
+							<svg width="24" height="24" viewBox="0 0 24 24">
+								<path id="like-icon" d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z" fill="white"></path>
+							</svg>
+						</button>
+						<!-- Dislike Button -->
+						<button class="p-2 bg-gray-700 hover:bg-red-600 text-gray-300 hover:text-white rounded-full transition-all duration-200 border border-gray-600 hover:border-red-500">
+							<svg width="24" height="24" viewBox="0 0 24 24" style="transform: rotate(180deg);">
+								<path id="dislike-icon" d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z" fill="white"></path>
+							</svg>
+						</button>
+						<button id="fullscreenBtn" class="p-2 bg-gray-700 hover:bg-blue-600 text-gray-300 hover:text-white rounded-full transition-all duration-200 border border-gray-600 hover:border-blue-500">
+							<svg class="w-5 h-5" fill="white" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
+							</svg>
+						</button>
+					</div>
+				</div>
+				<!-- Game Description -->
+				<div class="bg-gray-700 rounded-lg p-6 border border-gray-600">
+					<h2 class="text-xl font-bold text-white mb-4">About This Game</h2>
+					<p class="text-gray-300 leading-relaxed">
+						{ game.Description }
+					</p>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script>
+		document.getElementById('fullscreenBtn').addEventListener('click', function() {
+			const gameContainer = document.getElementById('gameContainer');
+			const gameObject = document.getElementById('gameObject');
+			
+			if (!document.fullscreenElement) {
+				// Enter fullscreen
+				if (gameContainer.requestFullscreen) {
+					gameContainer.requestFullscreen();
+				} else if (gameContainer.webkitRequestFullscreen) {
+					gameContainer.webkitRequestFullscreen();
+				} else if (gameContainer.mozRequestFullScreen) {
+					gameContainer.mozRequestFullScreen();
+				} else if (gameContainer.msRequestFullscreen) {
+					gameContainer.msRequestFullscreen();
+				}
+				
+				// Scale game object to fit fullscreen
+				gameObject.style.width = '100vw';
+				gameObject.style.height = '100vh';
+			} else {
+				// Exit fullscreen
+				if (document.exitFullscreen) {
+					document.exitFullscreen();
+				} else if (document.webkitExitFullscreen) {
+					document.webkitExitFullscreen();
+				} else if (document.mozCancelFullScreen) {
+					document.mozCancelFullScreen();
+				} else if (document.msExitFullscreen) {
+					document.msExitFullscreen();
+				}
+				
+				// Reset game object size
+				gameObject.style.width = '800px';
+				gameObject.style.height = '600px';
+			}
+		});
+		
+		// Handle fullscreen change events
+		document.addEventListener('fullscreenchange', handleFullscreenChange);
+		document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+		document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+		document.addEventListener('msfullscreenchange', handleFullscreenChange);
+		
+		function handleFullscreenChange() {
+			const gameObject = document.getElementById('gameObject');
+			if (!document.fullscreenElement) {
+				// Reset size when exiting fullscreen
+				gameObject.style.width = '800px';
+				gameObject.style.height = '600px';
+			}
+		}
+	</script>
+}
