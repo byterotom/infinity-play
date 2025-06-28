@@ -1,0 +1,27 @@
+package components
+
+import (
+	"github.com/byterotom/infinity-play/internal/db/dbgen"
+	"github.com/byterotom/infinity-play/pkg"
+)
+
+templ Tag(tag string, search bool, games []dbgen.Game) {
+	<div class="mb-10 mt-5 px-4 text-center">
+		<!-- tag Title -->
+		<h2 class="text-3xl font-bold text-white mb-3 tracking-wide">
+			if search {
+				Results related to "{ tag }"
+			} else {
+				All { pkg.Capital(tag) } Games
+			}
+		</h2>
+		<!-- Grid-like Flex Container -->
+		<div class="flex flex-wrap justify-center gap-4">
+			for _, game := range games {
+				<div class="w-[calc(100%/5-1rem)] max-w-xs">
+					@Card(&game)
+				</div>
+			}
+		</div>
+	</div>
+}

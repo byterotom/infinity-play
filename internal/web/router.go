@@ -3,6 +3,7 @@ package web
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"net/http"
 
 	"github.com/byterotom/infinity-play/internal/db/dbgen"
@@ -24,11 +25,48 @@ func NewInfinityMux(r2 *pkg.R2, conn *sql.DB) http.Handler {
 		conn:     conn,
 	}
 
+	mux.HandleFunc("/", mux.home)
+	mux.HandleFunc("/category/{cat}", mux.category)
 	mux.Handle("/game/", game.NewGameMux(r2, conn))
 	mux.Handle("/admin/", admin.NewAdminMux(r2, conn))
-	mux.HandleFunc("/", mux.home)
 
 	return mux
+}
+
+func (mux *InfinityMux) category(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	defer func() {
+		if err != nil {
+			http.Error(w, err.Error(), 500)
+			return
+		}
+	}()
+
+	var cats map[string]bool = map[string]bool{
+		"action":   true,
+		"racing":   true,
+		"shooting": true,
+		"sports":   true,
+		"strategy": true,
+		"puzzle":   true,
+		"io":       true,
+		"2-player": true,
+	}
+	cat := r.PathValue("cat")
+	if !cats[cat] {
+		err = errors.New("NOT FOUND")
+		return
+	}
+
+	q := dbgen.New(mux.conn)
+
+	games, err := q.GetGamesByTag(context.TODO(), cat)
+	if err != nil {
+		return
+	}
+
+	err = views.Index(components.Tag(cat, false,games)).Render(r.Context(), w)
 }
 
 func (mux *InfinityMux) home(w http.ResponseWriter, r *http.Request) {

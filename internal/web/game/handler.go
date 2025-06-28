@@ -3,11 +3,11 @@ package game
 import (
 	"bytes"
 	"context"
-	"database/sql"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/byterotom/infinity-play/internal/db/dbgen"
 	"github.com/byterotom/infinity-play/pkg"
@@ -41,43 +41,47 @@ func (mux *GameMux) uploadGame(w http.ResponseWriter, r *http.Request) {
 		}
 		tx.Commit()
 	}()
-	arg.Name = r.FormValue("name")
+	arg.Name = strings.ToLower(r.FormValue("name"))
 	arg.Description = r.FormValue("description")
 	arg.Technology = r.FormValue("technology")
+	tags := strings.Split(strings.ReplaceAll(r.FormValue("tags"), " ", ""), ",")
 
 	var buf bytes.Buffer
-	if arg.Technology == "flash" {
-		file, _, err := r.FormFile("game_file")
-		if err != nil {
-			return
-		}
-		tee := io.TeeReader(file, &buf)
-
-		arg.ID, err = pkg.HashWithReader(tee)
-		if err != nil {
-			return
-		}
-	} else {
-		arg.GameUrl = sql.NullString{
-			String: r.FormValue("game_url"),
-			Valid:  true,
-		}
-
-		arg.ID = pkg.HashWithString(arg.GameUrl.String)
-	}
-
-	_, err = q.AddGame(ctx, arg)
+	file, _, err := r.FormFile("game_file")
 	if err != nil {
 		return
 	}
 
-	if arg.Technology == "flash" {
-		gameFileKey := fmt.Sprintf("%s/game_file.swf", arg.ID)
+	tee := io.TeeReader(file, &buf)
+	arg.ID, err = pkg.HashWithReader(tee)
+	if err != nil {
+		return
+	}
 
-		err = mux.r2.Upload(gameFileKey, &buf)
+	err = q.AddGame(ctx, arg)
+	if err != nil {
+		return
+	}
+
+	for _, tag := range tags {
+		err = q.AddNewTags(ctx, tag)
 		if err != nil {
 			return
 		}
+		tid, err := q.GetTagIdByName(ctx, tag)
+		if err != nil {
+			return
+		}
+		err = q.AddGameTags(ctx, dbgen.AddGameTagsParams{GameID: arg.ID, TagID: tid})
+		if err != nil {
+			return
+		}
+	}
+
+	gameFileKey := fmt.Sprintf("%s/game_file.swf", arg.ID)
+	err = mux.r2.Upload(gameFileKey, &buf)
+	if err != nil {
+		return
 	}
 
 	thumbnail, _, err := r.FormFile("thumbnail")
@@ -85,7 +89,6 @@ func (mux *GameMux) uploadGame(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		return
 	}
-
 	err = mux.r2.Upload(thumbnailKey, thumbnail)
 	if err != nil {
 		return
@@ -96,13 +99,12 @@ func (mux *GameMux) uploadGame(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		return
 	}
-
 	err = mux.r2.Upload(gifKey, gif)
 	if err != nil {
 		return
 	}
 
-	fmt.Fprintf(w, "Uploaded")
+	fmt.Fprintf(w, "Uploaded %s", arg.Name)
 }
 
 func (mux *GameMux) getGameData(w http.ResponseWriter, r *http.Request) {
@@ -191,10 +193,32 @@ func (mux *GameMux) deleteGame(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err = q.DeleteGameById(ctx, id)
+	err = q.DeleteGameById(ctx, id)
 	if err != nil {
 		return
 	}
 
 	mux.r2.Delete(id)
+}
+
+func (mux *GameMux) searchGame(w http.ResponseWriter, r *http.Request) {
+	ctx := context.TODO()
+
+	var err error
+	defer func() {
+		if err != nil {
+			http.Error(w, err.Error(), 500)
+			return
+		}
+	}()
+
+	pattern := r.URL.Query().Get("q")
+
+	q := dbgen.New(mux.conn)
+
+	games, err := q.GetGamesByPattern(ctx, pattern)
+	if err != nil {
+		return
+	}
+	views.Index(components.Tag(pattern, true, games)).Render(r.Context(), w)
 }

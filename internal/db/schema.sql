@@ -21,6 +21,6 @@ CREATE TABLE game_tags(
     game_id TEXT NOT NULL,
     tag_id INTEGER NOT NULL,
     PRIMARY KEY(game_id, tag_id),
-    FOREIGN KEY(game_id) REFERENCES game(id),
+    FOREIGN KEY(game_id) REFERENCES game(id) ON DELETE CASCADE,
     FOREIGN KEY(tag_id) REFERENCES tags(tag_id)
 );

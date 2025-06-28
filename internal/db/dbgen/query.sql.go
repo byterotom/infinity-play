@@ -10,11 +10,11 @@ import (
 	"database/sql"
 )
 
-const addGame = `-- name: AddGame :one
+const addGame = `-- name: AddGame :exec
 INSERT INTO
-    Game(id, name, description, technology, game_url)
+    game(id, name, description, technology, game_url)
 VALUES
-    (?, ?, ?, ?, ?) RETURNING id, name, description, technology, release_date, likes, votes, game_url
+    (?, ?, ?, ?, ?)
 `
 
 type AddGameParams struct {
@@ -25,56 +25,63 @@ type AddGameParams struct {
 	GameUrl     sql.NullString
 }
 
-func (q *Queries) AddGame(ctx context.Context, arg AddGameParams) (Game, error) {
-	row := q.db.QueryRowContext(ctx, addGame,
+func (q *Queries) AddGame(ctx context.Context, arg AddGameParams) error {
+	_, err := q.db.ExecContext(ctx, addGame,
 		arg.ID,
 		arg.Name,
 		arg.Description,
 		arg.Technology,
 		arg.GameUrl,
 	)
-	var i Game
-	err := row.Scan(
-		&i.ID,
-		&i.Name,
-		&i.Description,
-		&i.Technology,
-		&i.ReleaseDate,
-		&i.Likes,
-		&i.Votes,
-		&i.GameUrl,
-	)
-	return i, err
+	return err
 }
 
-const deleteGameById = `-- name: DeleteGameById :one
-DELETE FROM
-    Game
-WHERE
-    id = ? RETURNING id, name, description, technology, release_date, likes, votes, game_url
+const addGameTags = `-- name: AddGameTags :exec
+INSERT INTO
+    game_tags(game_id, tag_id)
+VALUES
+    (?, ?)
 `
 
-func (q *Queries) DeleteGameById(ctx context.Context, id string) (Game, error) {
-	row := q.db.QueryRowContext(ctx, deleteGameById, id)
-	var i Game
-	err := row.Scan(
-		&i.ID,
-		&i.Name,
-		&i.Description,
-		&i.Technology,
-		&i.ReleaseDate,
-		&i.Likes,
-		&i.Votes,
-		&i.GameUrl,
-	)
-	return i, err
+type AddGameTagsParams struct {
+	GameID string
+	TagID  int64
+}
+
+func (q *Queries) AddGameTags(ctx context.Context, arg AddGameTagsParams) error {
+	_, err := q.db.ExecContext(ctx, addGameTags, arg.GameID, arg.TagID)
+	return err
+}
+
+const addNewTags = `-- name: AddNewTags :exec
+INSERT
+    OR IGNORE INTO tags(tag)
+VALUES
+    (?)
+`
+
+func (q *Queries) AddNewTags(ctx context.Context, tag string) error {
+	_, err := q.db.ExecContext(ctx, addNewTags, tag)
+	return err
+}
+
+const deleteGameById = `-- name: DeleteGameById :exec
+DELETE FROM
+    game
+WHERE
+    id = ?
+`
+
+func (q *Queries) DeleteGameById(ctx context.Context, id string) error {
+	_, err := q.db.ExecContext(ctx, deleteGameById, id)
+	return err
 }
 
 const getGameByName = `-- name: GetGameByName :one
 SELECT
     id, name, description, technology, release_date, likes, votes, game_url
 FROM
-    Game
+    game
 WHERE
     name = ?
 `
@@ -99,7 +106,7 @@ const getGameIdByName = `-- name: GetGameIdByName :one
 SELECT
     id
 FROM
-    Game
+    game
 WHERE
     name = ?
 `
@@ -111,11 +118,99 @@ func (q *Queries) GetGameIdByName(ctx context.Context, name string) (string, err
 	return id, err
 }
 
+const getGamesByPattern = `-- name: GetGamesByPattern :many
+SELECT
+    id, name, description, technology, release_date, likes, votes, game_url
+FROM
+    game
+WHERE
+    ?1 IS NOT NULL
+    AND (
+        name LIKE '%' || ?1 || '%'
+        OR description LIKE '%' || ?1 || '%'
+    )
+`
+
+func (q *Queries) GetGamesByPattern(ctx context.Context, pattern interface{}) ([]Game, error) {
+	rows, err := q.db.QueryContext(ctx, getGamesByPattern, pattern)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Game
+	for rows.Next() {
+		var i Game
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.Description,
+			&i.Technology,
+			&i.ReleaseDate,
+			&i.Likes,
+			&i.Votes,
+			&i.GameUrl,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getGamesByTag = `-- name: GetGamesByTag :many
+SELECT
+    g.id, g.name, g.description, g.technology, g.release_date, g.likes, g.votes, g.game_url
+FROM
+    game AS g
+    JOIN game_tags AS gt ON g.id = gt.game_id
+    JOIN tags AS t ON gt.tag_id = t.tag_id
+WHERE
+    t.tag = ?
+`
+
+func (q *Queries) GetGamesByTag(ctx context.Context, tag string) ([]Game, error) {
+	rows, err := q.db.QueryContext(ctx, getGamesByTag, tag)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Game
+	for rows.Next() {
+		var i Game
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.Description,
+			&i.Technology,
+			&i.ReleaseDate,
+			&i.Likes,
+			&i.Votes,
+			&i.GameUrl,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getNewGames = `-- name: GetNewGames :many
 SELECT
     id, name, description, technology, release_date, likes, votes, game_url
 FROM
-    Game
+    game
 ORDER BY
     release_date
 LIMIT
@@ -158,7 +253,7 @@ const getPopularGames = `-- name: GetPopularGames :many
 SELECT
     id, name, description, technology, release_date, likes, votes, game_url
 FROM
-    Game
+    game
 ORDER BY
     votes DESC
 LIMIT
@@ -197,11 +292,27 @@ func (q *Queries) GetPopularGames(ctx context.Context) ([]Game, error) {
 	return items, nil
 }
 
+const getTagIdByName = `-- name: GetTagIdByName :one
+SELECT
+    tag_id
+FROM
+    tags
+WHERE
+    tag = ?
+`
+
+func (q *Queries) GetTagIdByName(ctx context.Context, tag string) (int64, error) {
+	row := q.db.QueryRowContext(ctx, getTagIdByName, tag)
+	var tag_id int64
+	err := row.Scan(&tag_id)
+	return tag_id, err
+}
+
 const getTopRatedGames = `-- name: GetTopRatedGames :many
 SELECT
     id, name, description, technology, release_date, likes, votes, game_url
 FROM
-    Game
+    game
 ORDER BY
     (likes / votes) DESC
 LIMIT
