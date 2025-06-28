@@ -2,7 +2,6 @@ package web
 
 import (
 	"context"
-	"database/sql"
 	"errors"
 	"net/http"
 
@@ -12,14 +11,15 @@ import (
 	"github.com/byterotom/infinity-play/pkg"
 	"github.com/byterotom/infinity-play/views"
 	"github.com/byterotom/infinity-play/views/components"
+	"github.com/jackc/pgx/v5"
 )
 
 type InfinityMux struct {
 	*http.ServeMux
-	conn *sql.DB
+	conn *pgx.Conn
 }
 
-func NewInfinityMux(r2 *pkg.R2, conn *sql.DB) http.Handler {
+func NewInfinityMux(r2 *pkg.R2, conn *pgx.Conn) http.Handler {
 	mux := &InfinityMux{
 		ServeMux: http.NewServeMux(),
 		conn:     conn,
@@ -66,7 +66,7 @@ func (mux *InfinityMux) category(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = views.Index(components.Tag(cat, false,games)).Render(r.Context(), w)
+	err = views.Index(components.Tag(cat, false, games)).Render(r.Context(), w)
 }
 
 func (mux *InfinityMux) home(w http.ResponseWriter, r *http.Request) {

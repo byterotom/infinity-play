@@ -5,8 +5,7 @@
 package dbgen
 
 import (
-	"database/sql"
-	"time"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type Game struct {
@@ -14,18 +13,18 @@ type Game struct {
 	Name        string
 	Description string
 	Technology  string
-	ReleaseDate time.Time
-	Likes       int64
-	Votes       int64
-	GameUrl     sql.NullString
+	ReleaseDate pgtype.Date
+	Likes       int32
+	Votes       int32
+	GameUrl     pgtype.Text
 }
 
 type GameTag struct {
 	GameID string
-	TagID  int64
+	TagID  int32
 }
 
 type Tag struct {
-	TagID int64
+	TagID int32
 	Tag   string
 }

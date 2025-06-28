@@ -11,6 +11,7 @@ type Config struct {
 	AccessKeyId     string
 	AccessKeySecret string
 	BucketName      string
+	DatabaseUrl     string
 }
 
 func LoadConfig() *Config {
@@ -22,9 +23,10 @@ func LoadConfig() *Config {
 	}
 
 	return &Config{
-		AccountId:       viper.Get("R2_ACCOUNT_ID").(string),
-		AccessKeyId:     viper.Get("R2_ACCESS_KEY_ID").(string),
-		AccessKeySecret: viper.Get("R2_ACCESS_KEY_SECRET").(string),
-		BucketName:      viper.Get("R2_BUCKET_NAME").(string),
+		AccountId:       viper.GetString("R2_ACCOUNT_ID"),
+		AccessKeyId:     viper.GetString("R2_ACCESS_KEY_ID"),
+		AccessKeySecret: viper.GetString("R2_ACCESS_KEY_SECRET"),
+		BucketName:      viper.GetString("R2_BUCKET_NAME"),
+		DatabaseUrl:     viper.GetString("DATABASE_URL"),
 	}
 }

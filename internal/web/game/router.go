@@ -1,19 +1,19 @@
 package game
 
 import (
-	"database/sql"
 	"net/http"
 
 	"github.com/byterotom/infinity-play/pkg"
+	"github.com/jackc/pgx/v5"
 )
 
 type GameMux struct {
 	*http.ServeMux
 	r2   *pkg.R2
-	conn *sql.DB
+	conn *pgx.Conn
 }
 
-func NewGameMux(r2 *pkg.R2, conn *sql.DB) http.Handler {
+func NewGameMux(r2 *pkg.R2, conn *pgx.Conn) http.Handler {
 	mux := GameMux{
 		ServeMux: http.NewServeMux(),
 		r2:       r2,

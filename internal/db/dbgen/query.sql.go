@@ -7,14 +7,15 @@ package dbgen
 
 import (
 	"context"
-	"database/sql"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const addGame = `-- name: AddGame :exec
 INSERT INTO
     game(id, name, description, technology, game_url)
 VALUES
-    (?, ?, ?, ?, ?)
+    ($1, $2, $3, $4, $5)
 `
 
 type AddGameParams struct {
@@ -22,11 +23,11 @@ type AddGameParams struct {
 	Name        string
 	Description string
 	Technology  string
-	GameUrl     sql.NullString
+	GameUrl     pgtype.Text
 }
 
 func (q *Queries) AddGame(ctx context.Context, arg AddGameParams) error {
-	_, err := q.db.ExecContext(ctx, addGame,
+	_, err := q.db.Exec(ctx, addGame,
 		arg.ID,
 		arg.Name,
 		arg.Description,
@@ -40,28 +41,28 @@ const addGameTags = `-- name: AddGameTags :exec
 INSERT INTO
     game_tags(game_id, tag_id)
 VALUES
-    (?, ?)
+    ($1, $2)
 `
 
 type AddGameTagsParams struct {
 	GameID string
-	TagID  int64
+	TagID  int32
 }
 
 func (q *Queries) AddGameTags(ctx context.Context, arg AddGameTagsParams) error {
-	_, err := q.db.ExecContext(ctx, addGameTags, arg.GameID, arg.TagID)
+	_, err := q.db.Exec(ctx, addGameTags, arg.GameID, arg.TagID)
 	return err
 }
 
 const addNewTags = `-- name: AddNewTags :exec
-INSERT
-    OR IGNORE INTO tags(tag)
+INSERT INTO
+    tags(tag)
 VALUES
-    (?)
+    ($1) ON CONFLICT DO NOTHING
 `
 
 func (q *Queries) AddNewTags(ctx context.Context, tag string) error {
-	_, err := q.db.ExecContext(ctx, addNewTags, tag)
+	_, err := q.db.Exec(ctx, addNewTags, tag)
 	return err
 }
 
@@ -69,11 +70,11 @@ const deleteGameById = `-- name: DeleteGameById :exec
 DELETE FROM
     game
 WHERE
-    id = ?
+    id = $1
 `
 
 func (q *Queries) DeleteGameById(ctx context.Context, id string) error {
-	_, err := q.db.ExecContext(ctx, deleteGameById, id)
+	_, err := q.db.Exec(ctx, deleteGameById, id)
 	return err
 }
 
@@ -83,11 +84,11 @@ SELECT
 FROM
     game
 WHERE
-    name = ?
+    name = $1
 `
 
 func (q *Queries) GetGameByName(ctx context.Context, name string) (Game, error) {
-	row := q.db.QueryRowContext(ctx, getGameByName, name)
+	row := q.db.QueryRow(ctx, getGameByName, name)
 	var i Game
 	err := row.Scan(
 		&i.ID,
@@ -108,11 +109,11 @@ SELECT
 FROM
     game
 WHERE
-    name = ?
+    name = $1
 `
 
 func (q *Queries) GetGameIdByName(ctx context.Context, name string) (string, error) {
-	row := q.db.QueryRowContext(ctx, getGameIdByName, name)
+	row := q.db.QueryRow(ctx, getGameIdByName, name)
 	var id string
 	err := row.Scan(&id)
 	return id, err
@@ -124,15 +125,15 @@ SELECT
 FROM
     game
 WHERE
-    ?1 IS NOT NULL
+    $1 IS NOT NULL
     AND (
-        name LIKE '%' || ?1 || '%'
-        OR description LIKE '%' || ?1 || '%'
+        name ILIKE '%' || $1 || '%'
+        OR description ILIKE '%' || $1 || '%'
     )
 `
 
-func (q *Queries) GetGamesByPattern(ctx context.Context, pattern interface{}) ([]Game, error) {
-	rows, err := q.db.QueryContext(ctx, getGamesByPattern, pattern)
+func (q *Queries) GetGamesByPattern(ctx context.Context, dollar_1 interface{}) ([]Game, error) {
+	rows, err := q.db.Query(ctx, getGamesByPattern, dollar_1)
 	if err != nil {
 		return nil, err
 	}
@@ -153,9 +154,6 @@ func (q *Queries) GetGamesByPattern(ctx context.Context, pattern interface{}) ([
 			return nil, err
 		}
 		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
 	}
 	if err := rows.Err(); err != nil {
 		return nil, err
@@ -171,11 +169,11 @@ FROM
     JOIN game_tags AS gt ON g.id = gt.game_id
     JOIN tags AS t ON gt.tag_id = t.tag_id
 WHERE
-    t.tag = ?
+    t.tag = $1
 `
 
 func (q *Queries) GetGamesByTag(ctx context.Context, tag string) ([]Game, error) {
-	rows, err := q.db.QueryContext(ctx, getGamesByTag, tag)
+	rows, err := q.db.Query(ctx, getGamesByTag, tag)
 	if err != nil {
 		return nil, err
 	}
@@ -196,9 +194,6 @@ func (q *Queries) GetGamesByTag(ctx context.Context, tag string) ([]Game, error)
 			return nil, err
 		}
 		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
 	}
 	if err := rows.Err(); err != nil {
 		return nil, err
@@ -218,7 +213,7 @@ LIMIT
 `
 
 func (q *Queries) GetNewGames(ctx context.Context) ([]Game, error) {
-	rows, err := q.db.QueryContext(ctx, getNewGames)
+	rows, err := q.db.Query(ctx, getNewGames)
 	if err != nil {
 		return nil, err
 	}
@@ -239,9 +234,6 @@ func (q *Queries) GetNewGames(ctx context.Context) ([]Game, error) {
 			return nil, err
 		}
 		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
 	}
 	if err := rows.Err(); err != nil {
 		return nil, err
@@ -261,7 +253,7 @@ LIMIT
 `
 
 func (q *Queries) GetPopularGames(ctx context.Context) ([]Game, error) {
-	rows, err := q.db.QueryContext(ctx, getPopularGames)
+	rows, err := q.db.Query(ctx, getPopularGames)
 	if err != nil {
 		return nil, err
 	}
@@ -282,9 +274,6 @@ func (q *Queries) GetPopularGames(ctx context.Context) ([]Game, error) {
 			return nil, err
 		}
 		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
 	}
 	if err := rows.Err(); err != nil {
 		return nil, err
@@ -298,12 +287,12 @@ SELECT
 FROM
     tags
 WHERE
-    tag = ?
+    tag = $1
 `
 
-func (q *Queries) GetTagIdByName(ctx context.Context, tag string) (int64, error) {
-	row := q.db.QueryRowContext(ctx, getTagIdByName, tag)
-	var tag_id int64
+func (q *Queries) GetTagIdByName(ctx context.Context, tag string) (int32, error) {
+	row := q.db.QueryRow(ctx, getTagIdByName, tag)
+	var tag_id int32
 	err := row.Scan(&tag_id)
 	return tag_id, err
 }
@@ -314,13 +303,13 @@ SELECT
 FROM
     game
 ORDER BY
-    (likes / votes) DESC
+    (likes :: float / NULLIF(votes, 0)) DESC
 LIMIT
     10
 `
 
 func (q *Queries) GetTopRatedGames(ctx context.Context) ([]Game, error) {
-	rows, err := q.db.QueryContext(ctx, getTopRatedGames)
+	rows, err := q.db.Query(ctx, getTopRatedGames)
 	if err != nil {
 		return nil, err
 	}
@@ -341,9 +330,6 @@ func (q *Queries) GetTopRatedGames(ctx context.Context) ([]Game, error) {
 			return nil, err
 		}
 		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
 	}
 	if err := rows.Err(); err != nil {
 		return nil, err

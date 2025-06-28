@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"log"
 	"net/http"
 
@@ -11,12 +12,12 @@ import (
 )
 
 func main() {
-
+	ctx := context.Background()
 	env := config.LoadConfig()
 	r2 := pkg.NewR2(env)
 
-	conn := db.ConnectDB()
-	defer conn.Close()
+	conn := db.ConnectDB(ctx,env)
+	defer conn.Close(ctx)
 
 	mux := web.NewInfinityMux(r2, conn)
 

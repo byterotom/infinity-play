@@ -1,20 +1,20 @@
 package admin
 
 import (
-	"database/sql"
 	"net/http"
 
 	"github.com/byterotom/infinity-play/pkg"
 	"github.com/byterotom/infinity-play/views"
 	"github.com/byterotom/infinity-play/views/components"
+	"github.com/jackc/pgx/v5"
 )
 
 type AdminMux struct {
 	*http.ServeMux
-	conn *sql.DB
+	conn *pgx.Conn
 }
 
-func NewAdminMux(r2 *pkg.R2, conn *sql.DB) http.Handler {
+func NewAdminMux(r2 *pkg.R2, conn *pgx.Conn) http.Handler {
 	mux := AdminMux{
 		ServeMux: http.NewServeMux(),
 		conn:     conn,

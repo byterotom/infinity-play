@@ -13,6 +13,7 @@ import (
 	"github.com/byterotom/infinity-play/pkg"
 	"github.com/byterotom/infinity-play/views"
 	"github.com/byterotom/infinity-play/views/components"
+	"github.com/jackc/pgx/v5"
 )
 
 func (mux *GameMux) uploadGame(w http.ResponseWriter, r *http.Request) {
@@ -23,7 +24,7 @@ func (mux *GameMux) uploadGame(w http.ResponseWriter, r *http.Request) {
 	var arg dbgen.AddGameParams
 	var err error
 
-	tx, err := mux.conn.BeginTx(ctx, nil)
+	tx, err := mux.conn.BeginTx(ctx, pgx.TxOptions{})
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
@@ -35,11 +36,11 @@ func (mux *GameMux) uploadGame(w http.ResponseWriter, r *http.Request) {
 			if arg.ID != "" {
 				mux.r2.Delete(arg.ID)
 			}
-			tx.Rollback()
+			tx.Rollback(ctx)
 			http.Error(w, err.Error(), 500)
 			return
 		}
-		tx.Commit()
+		tx.Commit(ctx)
 	}()
 	arg.Name = strings.ToLower(r.FormValue("name"))
 	arg.Description = r.FormValue("description")

@@ -2,19 +2,19 @@
 INSERT INTO
     game(id, name, description, technology, game_url)
 VALUES
-    (?, ?, ?, ?, ?);
+    ($1, $2, $3, $4, $5);
 
 -- name: AddNewTags :exec
-INSERT
-    OR IGNORE INTO tags(tag)
+INSERT INTO
+    tags(tag)
 VALUES
-    (?);
+    ($1) ON CONFLICT DO NOTHING;
 
 -- name: AddGameTags :exec
 INSERT INTO
     game_tags(game_id, tag_id)
 VALUES
-    (?, ?);
+    ($1, $2);
 
 -- name: GetTagIdByName :one
 SELECT
@@ -22,7 +22,7 @@ SELECT
 FROM
     tags
 WHERE
-    tag = ?;
+    tag = $1;
 
 -- name: GetGameIdByName :one
 SELECT
@@ -30,13 +30,13 @@ SELECT
 FROM
     game
 WHERE
-    name = ?;
+    name = $1;
 
 -- name: DeleteGameById :exec
 DELETE FROM
     game
 WHERE
-    id = ?;
+    id = $1;
 
 -- name: GetGameByName :one
 SELECT
@@ -44,7 +44,7 @@ SELECT
 FROM
     game
 WHERE
-    name = ?;
+    name = $1;
 
 -- name: GetNewGames :many
 SELECT
@@ -62,7 +62,7 @@ SELECT
 FROM
     game
 ORDER BY
-    (likes / votes) DESC
+    (likes :: float / NULLIF(votes, 0)) DESC
 LIMIT
     10;
 
@@ -84,7 +84,7 @@ FROM
     JOIN game_tags AS gt ON g.id = gt.game_id
     JOIN tags AS t ON gt.tag_id = t.tag_id
 WHERE
-    t.tag = ?;
+    t.tag = $1;
 
 -- name: GetGamesByPattern :many
 SELECT
@@ -92,8 +92,8 @@ SELECT
 FROM
     game
 WHERE
-    sqlc.arg('pattern') IS NOT NULL
+    $1 IS NOT NULL
     AND (
-        name LIKE '%' || sqlc.arg('pattern') || '%'
-        OR description LIKE '%' || sqlc.arg('pattern') || '%'
+        name ILIKE '%' || $1 || '%'
+        OR description ILIKE '%' || $1 || '%'
     );
