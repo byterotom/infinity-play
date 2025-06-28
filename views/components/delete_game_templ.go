@@ -29,7 +29,7 @@ func DeleteGame() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div>THIS IS DELETE</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<head><link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css\"></head><div class=\"flex justify-center mt-10\"><div class=\"flex border border-gray-300 rounded overflow-hidden w-full max-w-md\"><input type=\"text\" name=\"q\" placeholder=\"Search Games\" class=\"flex-grow px-4 py-2 focus:outline-none text-white\" hx-get=\"/game/search?d=1\" hx-trigger=\"keyup[keyCode==13]\" hx-target=\"#search-res\"> <button class=\"bg-blue-500 hover:bg-blue-600 text-white px-4\" hx-get=\"/game/search?d=1\" hx-include=\"closest div\" hx-target=\"#search-res\"><svg class=\"w-5 h-5\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z\"></path></svg></button></div></div><div id=\"search-res\" class=\"mt-6 px-4 text-gray-800\"></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

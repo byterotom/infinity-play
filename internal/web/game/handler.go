@@ -220,5 +220,9 @@ func (mux *GameMux) searchGame(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		return
 	}
-	views.Index(components.Tag(pattern, true, games)).Render(r.Context(), w)
+	if r.URL.Query().Get("d") == "1" {
+		components.DelTag(pattern, games).Render(r.Context(), w)
+	} else {
+		views.Index(components.Tag(pattern, true, games)).Render(r.Context(), w)
+	}
 }
