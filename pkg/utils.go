@@ -5,6 +5,9 @@ import (
 	"fmt"
 	"io"
 	"log"
+
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 func HashWithReader(reader io.Reader) (string, error) {
@@ -20,4 +23,8 @@ func HashWithReader(reader io.Reader) (string, error) {
 func HashWithString(data string) string {
 	hash := sha256.Sum256([]byte(data))
 	return fmt.Sprintf("%x", hash)
+}
+
+func Capital(str string) string {
+	return cases.Title(language.English).String(str)
 }

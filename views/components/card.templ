@@ -1,0 +1,33 @@
+package components
+
+import (
+	"fmt"
+	"github.com/byterotom/infinity-play/internal/db/dbgen"
+	"github.com/byterotom/infinity-play/pkg"
+)
+
+templ Card(game *dbgen.Game) {
+	<a href={ fmt.Sprintf("/game/%s", game.Name) } class="relative block w-48 h-48 mt-2 group bg-gray-800 rounded-lg overflow-hidden border border-gray-700 hover:border-red-400 transition-all duration-300 hover:scale-105">
+		<!-- Image container -->
+		<div class="relative w-full h-40 overflow-hidden">
+			<!-- Static thumbnail image -->
+			<img
+				src={ fmt.Sprintf("/game/thumbnail/%s", game.ID) }
+				alt="Game Thumbnail"
+				class="w-full h-full object-cover transition-opacity duration-300"
+			/>
+			<!-- Hover GIF image (initially hidden, appears on hover) -->
+			<img
+				src={ fmt.Sprintf("/game/gif/%s", game.ID) }
+				alt="Game GIF"
+				class="w-full h-full object-cover absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+			/>
+		</div>
+		<!-- Game name below -->
+		<div class="p-2 h-8 flex items-center justify-center">
+			<span class="text-gray-300 text-sm font-medium group-hover:text-white truncate transition-colors duration-300">
+				{ pkg.Capital(game.Name) }
+			</span>
+		</div>
+	</a>
+}

@@ -1,0 +1,31 @@
+package components
+
+templ Admin(act string) {
+	<div class="p-6 space-y-6 bg-gray-900 min-h-screen">
+		<!-- Toggle Buttons -->
+		<form method="GET" class="flex gap-4">
+			<button
+				formaction="/admin/upload"
+				type="submit"
+				class="px-6 py-2 rounded-md bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow-md transition duration-200"
+			>
+				Upload Game
+			</button>
+			<button
+				formaction="/admin/delete"
+				type="submit"
+				class="px-6 py-2 rounded-md bg-red-600 hover:bg-red-700 text-white font-semibold shadow-md transition duration-200"
+			>
+				Delete Game
+			</button>
+		</form>
+		<!-- Action Section -->
+		<div class="mt-6 bg-gray-800 p-6 rounded-lg shadow-inner border border-gray-700">
+			if act == "delete" {
+				@DeleteGame()
+			} else {
+				@UploadGame()
+			}
+		</div>
+	</div>
+}

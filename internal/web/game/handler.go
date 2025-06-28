@@ -16,7 +16,6 @@ import (
 )
 
 func (mux *GameMux) uploadGame(w http.ResponseWriter, r *http.Request) {
-
 	ctx := context.TODO()
 
 	r.ParseMultipartForm(10 << 20)
@@ -102,6 +101,8 @@ func (mux *GameMux) uploadGame(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		return
 	}
+
+	fmt.Fprintf(w, "Uploaded")
 }
 
 func (mux *GameMux) getGameData(w http.ResponseWriter, r *http.Request) {
@@ -119,7 +120,7 @@ func (mux *GameMux) getGameData(w http.ResponseWriter, r *http.Request) {
 
 	q := dbgen.New(mux.conn)
 
-	game, err := q.GetByName(ctx, gameName)
+	game, err := q.GetGameByName(ctx, gameName)
 	if err != nil {
 		return
 	}
@@ -137,15 +138,31 @@ func (mux *GameMux) getGameFile(w http.ResponseWriter, r *http.Request) {
 	}()
 
 	gameId := r.PathValue("game_id")
+	fileType := r.PathValue("file_type")
+	if fileType != "swf" && fileType != "thumbnail" && fileType != "gif" {
+		return
+	}
 
-	gameKey := fmt.Sprintf("%s/game_file.swf", gameId)
-	obj, err := mux.r2.Get(gameKey)
+	var fileKey string
+
+	switch fileType {
+	case "swf":
+		fileKey = fmt.Sprintf("%s/game_file.swf", gameId)
+		w.Header().Set("Content-Type", "application/x-shockwave-flash")
+	case "gif":
+		fileKey = fmt.Sprintf("%s/gif.gif", gameId)
+		w.Header().Set("Content-Type", "image/gif")
+	default:
+		fileKey = fmt.Sprintf("%s/thumbnail", gameId)
+		w.Header().Set("Content-Type", "image/jpeg")
+	}
+
+	obj, err := mux.r2.Get(fileKey)
 	if err != nil {
 		return
 	}
 	defer obj.Close()
 
-	w.Header().Set("Content-Type", "application/x-shockwave-flash")
 	_, err = io.Copy(w, obj)
 
 	if err != nil {
@@ -169,12 +186,12 @@ func (mux *GameMux) deleteGame(w http.ResponseWriter, r *http.Request) {
 
 	q := dbgen.New(mux.conn)
 
-	id, err := q.GetIdByName(ctx, gameName)
+	id, err := q.GetGameIdByName(ctx, gameName)
 	if err != nil {
 		return
 	}
 
-	_, err = q.DeleteById(ctx, id)
+	_, err = q.DeleteGameById(ctx, id)
 	if err != nil {
 		return
 	}

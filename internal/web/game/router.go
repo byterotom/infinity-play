@@ -23,8 +23,8 @@ func NewGameMux(r2 *pkg.R2, conn *sql.DB) http.Handler {
 	// routes
 	mux.HandleFunc("POST /upload", mux.uploadGame)
 	mux.HandleFunc("GET /{game_name}", mux.getGameData)
-	mux.HandleFunc("GET /file/{game_id}", mux.getGameFile)
 	mux.HandleFunc("DELETE /{game_name}", mux.deleteGame)
+	mux.HandleFunc("GET /{file_type}/{game_id}", mux.getGameFile)
 
 	return http.StripPrefix("/game", mux)
 }

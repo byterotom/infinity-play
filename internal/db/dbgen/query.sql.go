@@ -47,15 +47,15 @@ func (q *Queries) AddGame(ctx context.Context, arg AddGameParams) (Game, error) 
 	return i, err
 }
 
-const deleteById = `-- name: DeleteById :one
+const deleteGameById = `-- name: DeleteGameById :one
 DELETE FROM
     Game
 WHERE
     id = ? RETURNING id, name, description, technology, release_date, likes, votes, game_url
 `
 
-func (q *Queries) DeleteById(ctx context.Context, id string) (Game, error) {
-	row := q.db.QueryRowContext(ctx, deleteById, id)
+func (q *Queries) DeleteGameById(ctx context.Context, id string) (Game, error) {
+	row := q.db.QueryRowContext(ctx, deleteGameById, id)
 	var i Game
 	err := row.Scan(
 		&i.ID,
@@ -70,15 +70,60 @@ func (q *Queries) DeleteById(ctx context.Context, id string) (Game, error) {
 	return i, err
 }
 
-const getAll = `-- name: GetAll :many
+const getGameByName = `-- name: GetGameByName :one
 SELECT
     id, name, description, technology, release_date, likes, votes, game_url
 FROM
     Game
+WHERE
+    name = ?
 `
 
-func (q *Queries) GetAll(ctx context.Context) ([]Game, error) {
-	rows, err := q.db.QueryContext(ctx, getAll)
+func (q *Queries) GetGameByName(ctx context.Context, name string) (Game, error) {
+	row := q.db.QueryRowContext(ctx, getGameByName, name)
+	var i Game
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Description,
+		&i.Technology,
+		&i.ReleaseDate,
+		&i.Likes,
+		&i.Votes,
+		&i.GameUrl,
+	)
+	return i, err
+}
+
+const getGameIdByName = `-- name: GetGameIdByName :one
+SELECT
+    id
+FROM
+    Game
+WHERE
+    name = ?
+`
+
+func (q *Queries) GetGameIdByName(ctx context.Context, name string) (string, error) {
+	row := q.db.QueryRowContext(ctx, getGameIdByName, name)
+	var id string
+	err := row.Scan(&id)
+	return id, err
+}
+
+const getNewGames = `-- name: GetNewGames :many
+SELECT
+    id, name, description, technology, release_date, likes, votes, game_url
+FROM
+    Game
+ORDER BY
+    release_date
+LIMIT
+    10
+`
+
+func (q *Queries) GetNewGames(ctx context.Context) ([]Game, error) {
+	rows, err := q.db.QueryContext(ctx, getNewGames)
 	if err != nil {
 		return nil, err
 	}
@@ -109,43 +154,88 @@ func (q *Queries) GetAll(ctx context.Context) ([]Game, error) {
 	return items, nil
 }
 
-const getByName = `-- name: GetByName :one
+const getPopularGames = `-- name: GetPopularGames :many
 SELECT
     id, name, description, technology, release_date, likes, votes, game_url
 FROM
     Game
-WHERE
-    name = ?
+ORDER BY
+    votes DESC
+LIMIT
+    10
 `
 
-func (q *Queries) GetByName(ctx context.Context, name string) (Game, error) {
-	row := q.db.QueryRowContext(ctx, getByName, name)
-	var i Game
-	err := row.Scan(
-		&i.ID,
-		&i.Name,
-		&i.Description,
-		&i.Technology,
-		&i.ReleaseDate,
-		&i.Likes,
-		&i.Votes,
-		&i.GameUrl,
-	)
-	return i, err
+func (q *Queries) GetPopularGames(ctx context.Context) ([]Game, error) {
+	rows, err := q.db.QueryContext(ctx, getPopularGames)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Game
+	for rows.Next() {
+		var i Game
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.Description,
+			&i.Technology,
+			&i.ReleaseDate,
+			&i.Likes,
+			&i.Votes,
+			&i.GameUrl,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
-const getIdByName = `-- name: GetIdByName :one
+const getTopRatedGames = `-- name: GetTopRatedGames :many
 SELECT
-    id
+    id, name, description, technology, release_date, likes, votes, game_url
 FROM
     Game
-WHERE
-    name = ?
+ORDER BY
+    (likes / votes) DESC
+LIMIT
+    10
 `
 
-func (q *Queries) GetIdByName(ctx context.Context, name string) (string, error) {
-	row := q.db.QueryRowContext(ctx, getIdByName, name)
-	var id string
-	err := row.Scan(&id)
-	return id, err
+func (q *Queries) GetTopRatedGames(ctx context.Context) ([]Game, error) {
+	rows, err := q.db.QueryContext(ctx, getTopRatedGames)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Game
+	for rows.Next() {
+		var i Game
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.Description,
+			&i.Technology,
+			&i.ReleaseDate,
+			&i.Likes,
+			&i.Votes,
+			&i.GameUrl,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }

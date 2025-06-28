@@ -1,0 +1,24 @@
+package components
+
+import (
+	"github.com/byterotom/infinity-play/internal/db/dbgen"
+	"github.com/byterotom/infinity-play/pkg"
+)
+
+templ Carousel(category string, games []dbgen.Game) {
+	<div class="mb-10 px-4 text-center">
+		<!-- Category Title -->
+		<h2 class="text-3xl font-bold text-white mb-3 tracking-wide">
+			{ pkg.Capital(category) } Games
+		</h2>
+		<!-- Scrollable Carousel Container -->
+		<div class="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-4 -mx-4 px-4">
+			for _, game := range games {
+				<!-- Snap card into place -->
+				<div class="snap-start flex-shrink-0">
+					@Card(&game)
+				</div>
+			}
+		</div>
+	</div>
+}
