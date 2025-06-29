@@ -21,11 +21,11 @@ func NewGameMux(r2 *pkg.R2, conn *pgx.Conn) http.Handler {
 	}
 
 	// routes
-	mux.HandleFunc("POST /upload", mux.uploadGame)
+	mux.HandleFunc("POST /upload", authenticate(mux.uploadGame))
+	mux.HandleFunc("DELETE /{game_name}", authenticate(mux.deleteGame))
 	mux.HandleFunc("GET /{game_name}", mux.getGameData)
-	mux.HandleFunc("DELETE /{game_name}", mux.deleteGame)
-	mux.HandleFunc("GET /search", mux.searchGame)
 	mux.HandleFunc("GET /{file_type}/{game_id}", mux.getGameFile)
+	mux.HandleFunc("GET /search", mux.searchGame)
 
 	return http.StripPrefix("/game", mux)
 }

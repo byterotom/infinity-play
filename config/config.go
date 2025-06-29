@@ -12,6 +12,7 @@ type Config struct {
 	AccessKeySecret string
 	BucketName      string
 	DatabaseUrl     string
+	JwtSecret       string
 }
 
 func LoadConfig() *Config {
@@ -28,5 +29,6 @@ func LoadConfig() *Config {
 		AccessKeySecret: viper.GetString("R2_ACCESS_KEY_SECRET"),
 		BucketName:      viper.GetString("R2_BUCKET_NAME"),
 		DatabaseUrl:     viper.GetString("DATABASE_URL"),
+		JwtSecret:       viper.GetString("JWT_SECRET"),
 	}
 }

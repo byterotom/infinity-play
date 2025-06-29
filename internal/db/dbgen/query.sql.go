@@ -78,6 +78,27 @@ func (q *Queries) DeleteGameById(ctx context.Context, id string) error {
 	return err
 }
 
+const getAdminIdByCredentials = `-- name: GetAdminIdByCredentials :one
+SELECT 
+    id 
+FROM 
+    admin 
+WHERE 
+    username=$1 AND password=$2
+`
+
+type GetAdminIdByCredentialsParams struct {
+	Username string
+	Password string
+}
+
+func (q *Queries) GetAdminIdByCredentials(ctx context.Context, arg GetAdminIdByCredentialsParams) (int32, error) {
+	row := q.db.QueryRow(ctx, getAdminIdByCredentials, arg.Username, arg.Password)
+	var id int32
+	err := row.Scan(&id)
+	return id, err
+}
+
 const getGameByName = `-- name: GetGameByName :one
 SELECT
     id, name, description, technology, release_date, likes, votes, game_url
@@ -125,14 +146,14 @@ SELECT
 FROM
     game
 WHERE
-    $1 IS NOT NULL
+    $1::text IS NOT NULL
     AND (
-        name ILIKE '%' || $1 || '%'
-        OR description ILIKE '%' || $1 || '%'
+        name ILIKE '%' || $1::text || '%'
+        OR description ILIKE '%' || $1::text || '%'
     )
 `
 
-func (q *Queries) GetGamesByPattern(ctx context.Context, dollar_1 interface{}) ([]Game, error) {
+func (q *Queries) GetGamesByPattern(ctx context.Context, dollar_1 string) ([]Game, error) {
 	rows, err := q.db.Query(ctx, getGamesByPattern, dollar_1)
 	if err != nil {
 		return nil, err

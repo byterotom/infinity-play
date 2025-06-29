@@ -8,6 +8,13 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+type Admin struct {
+	ID       int32
+	Username string
+	Password string
+	Role     string
+}
+
 type Game struct {
 	ID          string
 	Name        string

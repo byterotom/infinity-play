@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/byterotom/infinity-play/config"
+	"github.com/byterotom/infinity-play/internal/auth"
 	"github.com/byterotom/infinity-play/internal/db"
 	"github.com/byterotom/infinity-play/internal/web"
 	"github.com/byterotom/infinity-play/pkg"
@@ -16,8 +17,10 @@ func main() {
 	env := config.LoadConfig()
 	r2 := pkg.NewR2(env)
 
-	conn := db.ConnectDB(ctx,env)
+	conn := db.ConnectDB(ctx, env)
 	defer conn.Close(ctx)
+
+	auth.JwtSecret = []byte(env.JwtSecret)
 
 	mux := web.NewInfinityMux(r2, conn)
 

@@ -92,8 +92,16 @@ SELECT
 FROM
     game
 WHERE
-    $1 IS NOT NULL
+    $1::text IS NOT NULL
     AND (
-        name ILIKE '%' || $1 || '%'
-        OR description ILIKE '%' || $1 || '%'
+        name ILIKE '%' || $1::text || '%'
+        OR description ILIKE '%' || $1::text || '%'
     );
+
+-- name: GetAdminIdByCredentials :one
+SELECT 
+    id 
+FROM 
+    admin 
+WHERE 
+    username=$1 AND password=$2;
