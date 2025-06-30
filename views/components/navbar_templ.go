@@ -18,7 +18,7 @@ var navStyles = map[string]string{
 	"navLink":       "px-3 py-2 text-sm font-semibold text-gray-300 hover:text-white hover:bg-gray-800 rounded transition-all",
 	"searchWrapper": "flex items-center bg-gray-800 rounded-full px-4 py-2 border border-gray-600 focus-within:border-red-400 transition-colors",
 	"searchInput":   "bg-transparent text-white placeholder-gray-400 text-sm w-40 focus:outline-none focus:w-52 transition-all",
-	"searchButton":  "ml-2 text-gray-400 hover:text-white transition-colors",
+	"searchButton":  "ml-2 text-gray-400 hover:text-white transition-colors cursor-pointer",
 	"searchIcon":    "w-4 h-4",
 }
 
@@ -391,7 +391,7 @@ func Navbar() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "\"> ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "\" required> ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

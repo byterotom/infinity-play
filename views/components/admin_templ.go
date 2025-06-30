@@ -29,16 +29,16 @@ func Admin(act string) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"p-6 space-y-6 bg-gray-900 min-h-screen\"><!-- Toggle Buttons --><form method=\"GET\" class=\"flex gap-4\"><button formaction=\"/admin/upload\" type=\"submit\" class=\"px-6 py-2 rounded-md bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow-md transition duration-200\">Upload Game</button> <button formaction=\"/admin/delete\" type=\"submit\" class=\"px-6 py-2 rounded-md bg-red-600 hover:bg-red-700 text-white font-semibold shadow-md transition duration-200\">Delete Game</button></form><!-- Action Section --><div class=\"mt-6 bg-gray-800 p-6 rounded-lg shadow-inner border border-gray-700\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"p-6 space-y-6 bg-gray-900 min-h-screen\"><!-- Toggle Buttons --><form method=\"GET\" class=\"flex gap-4\"><button formaction=\"/admin/upload-game\" type=\"submit\" class=\"cursor-pointer px-6 py-2 rounded-md bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow-md transition duration-200\">Upload Game</button> <button formaction=\"/admin/delete-game\" type=\"submit\" class=\"cursor-pointer px-6 py-2 rounded-md bg-red-600 hover:bg-red-700 text-white font-semibold shadow-md transition duration-200\">Delete Game</button> <button formaction=\"/admin/logout\" type=\"submit\" class=\"cursor-pointer ml-auto px-6 py-2 rounded-md bg-gray-700 hover:bg-gray-600 text-white font-semibold shadow-md transition duration-200\">Logout</button></form><!-- Action Section --><div class=\"mt-6 bg-gray-800 p-6 rounded-lg shadow-inner border border-gray-700\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if act == "delete" {
+		if act == "delete-game" {
 			templ_7745c5c3_Err = DeleteGame().Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-		} else {
+		} else if act == "upload-game" {
 			templ_7745c5c3_Err = UploadGame().Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err

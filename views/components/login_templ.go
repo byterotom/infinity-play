@@ -8,7 +8,7 @@ package components
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-func Login(redirectTo string) templ.Component {
+func Login() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -29,20 +29,7 @@ func Login(redirectTo string) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<form method=\"POST\" action=\"/admin/login\" class=\"max-w-sm mx-auto mt-20 p-6 border border-gray-300 rounded shadow\"><input type=\"hidden\" name=\"redirect_to\" value=\"")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var2 string
-		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(redirectTo)
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/login.templ`, Line: 9, Col: 60}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\"><h2 class=\"text-white font-bold mb-4 text-center\">Admin Login</h2><div class=\"mb-4 text-white\"><label for=\"username\" class=\"block text-white-700 mb-1\">Username</label> <input type=\"text\" id=\"username\" name=\"username\" required class=\"text-white w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500\"></div><div class=\"mb-6 text-white\"><label for=\"password\" class=\"block text-white-700 mb-1\">Password</label> <input type=\"password\" id=\"password\" name=\"password\" required class=\"text-white w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500\"></div><button type=\"submit\" class=\"w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700\">Login</button></form>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<form method=\"POST\" action=\"/admin/login\" class=\"max-w-sm mx-auto mt-20 p-6 border border-gray-300 rounded shadow\"><h2 class=\"text-white font-bold mb-4 text-center\">Admin Login</h2><div class=\"mb-4 text-white\"><label for=\"username\" class=\"block text-white-700 mb-1\">Username</label> <input type=\"text\" id=\"username\" name=\"username\" required class=\"text-white w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500\"></div><div class=\"mb-6 text-white\"><label for=\"password\" class=\"block text-white-700 mb-1\">Password</label> <input type=\"password\" id=\"password\" name=\"password\" required class=\"text-white w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500\"></div><button type=\"submit\" class=\"cursor-pointer w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700\">Login</button></form>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

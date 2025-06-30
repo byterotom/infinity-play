@@ -3,3 +3,9 @@ schema:
 
 gen:
 	@cd internal/db/ && sqlc generate
+
+templ:
+	@templ generate
+
+build:
+	@go build -o bin/infinity-play

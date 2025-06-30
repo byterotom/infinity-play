@@ -24,7 +24,6 @@ func (mux *AdminMux) login(w http.ResponseWriter, r *http.Request) {
 	r.ParseMultipartForm(10 << 20)
 	username := r.FormValue("username")
 	password := pkg.HashWithString(r.FormValue("password"))
-	redirectTo := r.FormValue("redirect_to")
 
 	q := dbgen.New(mux.conn)
 
@@ -50,6 +49,20 @@ func (mux *AdminMux) login(w http.ResponseWriter, r *http.Request) {
 		Path:     "/",
 		HttpOnly: true,
 		Secure:   true,
+		SameSite: http.SameSiteLaxMode,
 	})
-	http.Redirect(w, r, redirectTo, http.StatusSeeOther)
+	http.Redirect(w, r, "/admin", http.StatusSeeOther)
+}
+
+func (mux *AdminMux) logout(w http.ResponseWriter, r *http.Request) {
+	http.SetCookie(w, &http.Cookie{
+		Name:     "infinity",
+		Value:    "",
+		Path:     "/",
+		MaxAge:   -1,
+		HttpOnly: true,
+		Secure:   true,
+		SameSite: http.SameSiteLaxMode,
+	})
+	http.Redirect(w, r, "/admin", http.StatusSeeOther)
 }

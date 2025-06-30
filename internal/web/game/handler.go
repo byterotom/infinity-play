@@ -44,7 +44,12 @@ func (mux *GameMux) uploadGame(w http.ResponseWriter, r *http.Request) {
 	}()
 	arg.Name = strings.ToLower(r.FormValue("name"))
 	arg.Description = r.FormValue("description")
-	arg.Technology = r.FormValue("technology")
+	t := r.FormValue("technology")
+	if t == "html" {
+		arg.Technology = dbgen.TechHtml
+	} else {
+		arg.Technology = dbgen.TechFlash
+	}
 	tags := strings.Split(strings.ReplaceAll(r.FormValue("tags"), " ", ""), ",")
 
 	var buf bytes.Buffer
@@ -226,4 +231,34 @@ func (mux *GameMux) searchGame(w http.ResponseWriter, r *http.Request) {
 	} else {
 		views.Index(components.Tag(pattern, true, games)).Render(r.Context(), w)
 	}
+}
+
+func (mux *GameMux) vote(w http.ResponseWriter, r *http.Request) {
+	ctx := context.TODO()
+
+	var err error
+	defer func() {
+		if err != nil {
+			http.Error(w, err.Error(), 500)
+			return
+		}
+	}()
+
+	gameId := r.PathValue("game_id")
+	voteType := r.URL.Query().Get("v")
+
+	q := dbgen.New(mux.conn)
+
+	err = q.VoteGameById(ctx, gameId)
+	if err != nil {
+		return
+	}
+
+	if voteType == "like" {
+		err = q.LikeGameById(ctx, gameId)
+		if err != nil {
+			return
+		}
+	}
+
 }

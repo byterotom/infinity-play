@@ -5,25 +5,111 @@
 package dbgen
 
 import (
+	"database/sql/driver"
+	"fmt"
+
 	"github.com/jackc/pgx/v5/pgtype"
 )
+
+type RoleType string
+
+const (
+	RoleTypeMasterAdmin RoleType = "master-admin"
+	RoleTypeAdmin       RoleType = "admin"
+)
+
+func (e *RoleType) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = RoleType(s)
+	case string:
+		*e = RoleType(s)
+	default:
+		return fmt.Errorf("unsupported scan type for RoleType: %T", src)
+	}
+	return nil
+}
+
+type NullRoleType struct {
+	RoleType RoleType
+	Valid    bool // Valid is true if RoleType is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullRoleType) Scan(value interface{}) error {
+	if value == nil {
+		ns.RoleType, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.RoleType.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullRoleType) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.RoleType), nil
+}
+
+type Tech string
+
+const (
+	TechHtml  Tech = "html"
+	TechFlash Tech = "flash"
+)
+
+func (e *Tech) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = Tech(s)
+	case string:
+		*e = Tech(s)
+	default:
+		return fmt.Errorf("unsupported scan type for Tech: %T", src)
+	}
+	return nil
+}
+
+type NullTech struct {
+	Tech  Tech
+	Valid bool // Valid is true if Tech is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullTech) Scan(value interface{}) error {
+	if value == nil {
+		ns.Tech, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.Tech.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullTech) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.Tech), nil
+}
 
 type Admin struct {
 	ID       int32
 	Username string
 	Password string
-	Role     string
+	Role     RoleType
 }
 
 type Game struct {
 	ID          string
 	Name        string
 	Description string
-	Technology  string
+	Technology  Tech
 	ReleaseDate pgtype.Date
 	Likes       int32
 	Votes       int32
-	GameUrl     pgtype.Text
 }
 
 type GameTag struct {

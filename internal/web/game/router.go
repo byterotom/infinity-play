@@ -26,6 +26,8 @@ func NewGameMux(r2 *pkg.R2, conn *pgx.Conn) http.Handler {
 	mux.HandleFunc("GET /{game_name}", mux.getGameData)
 	mux.HandleFunc("GET /{file_type}/{game_id}", mux.getGameFile)
 	mux.HandleFunc("GET /search", mux.searchGame)
+	mux.HandleFunc("PUT /vote/{game_id}", mux.vote)
+
 
 	return http.StripPrefix("/game", mux)
 }

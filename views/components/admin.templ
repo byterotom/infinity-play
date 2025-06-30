@@ -5,25 +5,32 @@ templ Admin(act string) {
 		<!-- Toggle Buttons -->
 		<form method="GET" class="flex gap-4">
 			<button
-				formaction="/admin/upload"
+				formaction="/admin/upload-game"
 				type="submit"
-				class="px-6 py-2 rounded-md bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow-md transition duration-200"
+				class="cursor-pointer px-6 py-2 rounded-md bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow-md transition duration-200"
 			>
 				Upload Game
 			</button>
 			<button
-				formaction="/admin/delete"
+				formaction="/admin/delete-game"
 				type="submit"
-				class="px-6 py-2 rounded-md bg-red-600 hover:bg-red-700 text-white font-semibold shadow-md transition duration-200"
+				class="cursor-pointer px-6 py-2 rounded-md bg-red-600 hover:bg-red-700 text-white font-semibold shadow-md transition duration-200"
 			>
 				Delete Game
+			</button>
+			<button
+				formaction="/admin/logout"
+				type="submit"
+				class="cursor-pointer ml-auto px-6 py-2 rounded-md bg-gray-700 hover:bg-gray-600 text-white font-semibold shadow-md transition duration-200"
+			>
+				Logout
 			</button>
 		</form>
 		<!-- Action Section -->
 		<div class="mt-6 bg-gray-800 p-6 rounded-lg shadow-inner border border-gray-700">
-			if act == "delete" {
+			if act == "delete-game" {
 				@DeleteGame()
-			} else {
+			} else if act == "upload-game" {
 				@UploadGame()
 			}
 		</div>

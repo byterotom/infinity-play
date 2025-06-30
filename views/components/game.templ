@@ -39,18 +39,30 @@ templ Game(game *dbgen.Game) {
 				<div class="flex justify-end mb-6">
 					<div class="flex space-x-2">
 						<!-- Like Button -->
-						<button class="p-2 bg-gray-700 hover:bg-green-600 text-gray-300 hover:text-white rounded-full transition-all duration-200 border border-gray-600 hover:border-green-500">
+						<button
+							id="like-btn"
+							class="cursor-pointer p-2 bg-gray-700 hover:bg-green-600 text-gray-300 hover:text-white rounded-full transition-all duration-200 border border-gray-600 hover:border-green-500 disabled:cursor-not-allowed"
+							hx-put={ fmt.Sprintf("/game/vote/%s?v=like", game.ID) }
+							hx-swap="none"
+							onclick="handleVote('like')"
+						>
 							<svg width="24" height="24" viewBox="0 0 24 24">
 								<path id="like-icon" d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z" fill="white"></path>
 							</svg>
 						</button>
 						<!-- Dislike Button -->
-						<button class="p-2 bg-gray-700 hover:bg-red-600 text-gray-300 hover:text-white rounded-full transition-all duration-200 border border-gray-600 hover:border-red-500">
+						<button
+							id="dislike-btn"
+							class="cursor-pointer p-2 bg-gray-700 hover:bg-red-600 text-gray-300 hover:text-white rounded-full transition-all duration-200 border border-gray-600 hover:border-red-500 disabled:cursor-not-allowed"
+							hx-put={ fmt.Sprintf("/game/vote/%s?v=dislike", game.ID) }
+							hx-swap="none"
+							onclick="handleVote('dislike')"
+						>
 							<svg width="24" height="24" viewBox="0 0 24 24" style="transform: rotate(180deg);">
 								<path id="dislike-icon" d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z" fill="white"></path>
 							</svg>
 						</button>
-						<button id="fullscreenBtn" class="p-2 bg-gray-700 hover:bg-blue-600 text-gray-300 hover:text-white rounded-full transition-all duration-200 border border-gray-600 hover:border-blue-500">
+						<button id="fullscreenBtn" class="vote-btn cursor-pointer p-2 bg-gray-700 hover:bg-blue-600 text-gray-300 hover:text-white rounded-full transition-all duration-200 border border-gray-600 hover:border-blue-500">
 							<svg class="w-5 h-5" fill="white" stroke="currentColor" viewBox="0 0 24 24">
 								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
 							</svg>
@@ -68,6 +80,27 @@ templ Game(game *dbgen.Game) {
 		</div>
 	</div>
 	<script>
+
+		const gameId = {{ game.ID }};
+		const voteKey = `infinity_vote_${gameId}`;
+
+		function disableButtons() {
+			document.getElementById('like-btn').disabled = true;
+			document.getElementById('dislike-btn').disabled = true;
+		}
+
+		function handleVote(voteType) {
+			localStorage.setItem(voteKey, voteType);
+			disableButtons();
+		}
+
+		// Disable buttons on page load if already voted
+		document.addEventListener('DOMContentLoaded', function () {
+			if (localStorage.getItem(voteKey)) {
+				disableButtons();
+			}
+		});
+
 		document.getElementById('fullscreenBtn').addEventListener('click', function() {
 			const gameContainer = document.getElementById('gameContainer');
 			const gameObject = document.getElementById('gameObject');

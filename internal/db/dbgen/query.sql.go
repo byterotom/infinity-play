@@ -7,23 +7,20 @@ package dbgen
 
 import (
 	"context"
-
-	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const addGame = `-- name: AddGame :exec
 INSERT INTO
-    game(id, name, description, technology, game_url)
+    game(id, name, description, technology)
 VALUES
-    ($1, $2, $3, $4, $5)
+    ($1, $2, $3, $4)
 `
 
 type AddGameParams struct {
 	ID          string
 	Name        string
 	Description string
-	Technology  string
-	GameUrl     pgtype.Text
+	Technology  Tech
 }
 
 func (q *Queries) AddGame(ctx context.Context, arg AddGameParams) error {
@@ -32,7 +29,6 @@ func (q *Queries) AddGame(ctx context.Context, arg AddGameParams) error {
 		arg.Name,
 		arg.Description,
 		arg.Technology,
-		arg.GameUrl,
 	)
 	return err
 }
@@ -101,7 +97,7 @@ func (q *Queries) GetAdminIdByCredentials(ctx context.Context, arg GetAdminIdByC
 
 const getGameByName = `-- name: GetGameByName :one
 SELECT
-    id, name, description, technology, release_date, likes, votes, game_url
+    id, name, description, technology, release_date, likes, votes
 FROM
     game
 WHERE
@@ -119,7 +115,6 @@ func (q *Queries) GetGameByName(ctx context.Context, name string) (Game, error) 
 		&i.ReleaseDate,
 		&i.Likes,
 		&i.Votes,
-		&i.GameUrl,
 	)
 	return i, err
 }
@@ -142,7 +137,7 @@ func (q *Queries) GetGameIdByName(ctx context.Context, name string) (string, err
 
 const getGamesByPattern = `-- name: GetGamesByPattern :many
 SELECT
-    id, name, description, technology, release_date, likes, votes, game_url
+    id, name, description, technology, release_date, likes, votes
 FROM
     game
 WHERE
@@ -170,7 +165,6 @@ func (q *Queries) GetGamesByPattern(ctx context.Context, dollar_1 string) ([]Gam
 			&i.ReleaseDate,
 			&i.Likes,
 			&i.Votes,
-			&i.GameUrl,
 		); err != nil {
 			return nil, err
 		}
@@ -184,7 +178,7 @@ func (q *Queries) GetGamesByPattern(ctx context.Context, dollar_1 string) ([]Gam
 
 const getGamesByTag = `-- name: GetGamesByTag :many
 SELECT
-    g.id, g.name, g.description, g.technology, g.release_date, g.likes, g.votes, g.game_url
+    g.id, g.name, g.description, g.technology, g.release_date, g.likes, g.votes
 FROM
     game AS g
     JOIN game_tags AS gt ON g.id = gt.game_id
@@ -210,7 +204,6 @@ func (q *Queries) GetGamesByTag(ctx context.Context, tag string) ([]Game, error)
 			&i.ReleaseDate,
 			&i.Likes,
 			&i.Votes,
-			&i.GameUrl,
 		); err != nil {
 			return nil, err
 		}
@@ -224,7 +217,7 @@ func (q *Queries) GetGamesByTag(ctx context.Context, tag string) ([]Game, error)
 
 const getNewGames = `-- name: GetNewGames :many
 SELECT
-    id, name, description, technology, release_date, likes, votes, game_url
+    id, name, description, technology, release_date, likes, votes
 FROM
     game
 ORDER BY
@@ -250,7 +243,6 @@ func (q *Queries) GetNewGames(ctx context.Context) ([]Game, error) {
 			&i.ReleaseDate,
 			&i.Likes,
 			&i.Votes,
-			&i.GameUrl,
 		); err != nil {
 			return nil, err
 		}
@@ -264,7 +256,7 @@ func (q *Queries) GetNewGames(ctx context.Context) ([]Game, error) {
 
 const getPopularGames = `-- name: GetPopularGames :many
 SELECT
-    id, name, description, technology, release_date, likes, votes, game_url
+    id, name, description, technology, release_date, likes, votes
 FROM
     game
 ORDER BY
@@ -290,7 +282,6 @@ func (q *Queries) GetPopularGames(ctx context.Context) ([]Game, error) {
 			&i.ReleaseDate,
 			&i.Likes,
 			&i.Votes,
-			&i.GameUrl,
 		); err != nil {
 			return nil, err
 		}
@@ -320,7 +311,7 @@ func (q *Queries) GetTagIdByName(ctx context.Context, tag string) (int32, error)
 
 const getTopRatedGames = `-- name: GetTopRatedGames :many
 SELECT
-    id, name, description, technology, release_date, likes, votes, game_url
+    id, name, description, technology, release_date, likes, votes
 FROM
     game
 ORDER BY
@@ -346,7 +337,6 @@ func (q *Queries) GetTopRatedGames(ctx context.Context) ([]Game, error) {
 			&i.ReleaseDate,
 			&i.Likes,
 			&i.Votes,
-			&i.GameUrl,
 		); err != nil {
 			return nil, err
 		}
@@ -356,4 +346,22 @@ func (q *Queries) GetTopRatedGames(ctx context.Context) ([]Game, error) {
 		return nil, err
 	}
 	return items, nil
+}
+
+const likeGameById = `-- name: LikeGameById :exec
+UPDATE game SET likes = likes+1 WHERE id = $1
+`
+
+func (q *Queries) LikeGameById(ctx context.Context, id string) error {
+	_, err := q.db.Exec(ctx, likeGameById, id)
+	return err
+}
+
+const voteGameById = `-- name: VoteGameById :exec
+UPDATE game SET votes = votes+1 WHERE id = $1
+`
+
+func (q *Queries) VoteGameById(ctx context.Context, id string) error {
+	_, err := q.db.Exec(ctx, voteGameById, id)
+	return err
 }

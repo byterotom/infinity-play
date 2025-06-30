@@ -19,8 +19,10 @@ func NewAdminMux(r2 *pkg.R2, conn *pgx.Conn) http.Handler {
 	}
 
 	// routes
+	mux.HandleFunc("GET /", loggedIn(formHandler))
 	mux.HandleFunc("GET /{act}", loggedIn(formHandler))
 	mux.HandleFunc("POST /login", mux.login)
+	mux.HandleFunc("GET /logout", mux.logout)
 
 	return http.StripPrefix("/admin", mux)
 }

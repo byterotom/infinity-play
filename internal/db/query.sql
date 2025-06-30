@@ -1,8 +1,8 @@
 -- name: AddGame :exec
 INSERT INTO
-    game(id, name, description, technology, game_url)
+    game(id, name, description, technology)
 VALUES
-    ($1, $2, $3, $4, $5);
+    ($1, $2, $3, $4);
 
 -- name: AddNewTags :exec
 INSERT INTO
@@ -105,3 +105,9 @@ FROM
     admin 
 WHERE 
     username=$1 AND password=$2;
+
+-- name: VoteGameById :exec
+UPDATE game SET votes = votes+1 WHERE id = $1;
+
+-- name: LikeGameById :exec
+UPDATE game SET likes = likes+1 WHERE id = $1;
