@@ -315,7 +315,7 @@ SELECT
 FROM
     game
 ORDER BY
-    (likes :: float / NULLIF(votes, 0)) DESC
+    (likes :: float / NULLIF(votes, 0)) DESC NULLS LAST
 LIMIT
     10
 `

@@ -71,6 +71,15 @@ templ Game(game *dbgen.Game) {
 				</div>
 				<!-- Game Description -->
 				<div class="bg-gray-700 rounded-lg p-6 border border-gray-600">
+					<h2 class="text-xl font-bold text-white mb-4">
+						Rating: 
+						if game.Votes!=0 {
+							{ fmt.Sprintf("%.1f/5.0 (%d votes)",float64(game.Likes * 5 / game.Votes), game.Votes) }
+						} else {
+							{ fmt.Sprintf("0.0/5.0 (%d votes)",game.Votes) }
+						}
+					</h2>
+					<h2 class="text-xl font-bold text-white mb-4">Technology: { pkg.Capital(game.Technology) }</h2>
 					<h2 class="text-xl font-bold text-white mb-4">About This Game</h2>
 					<p class="text-gray-300 leading-relaxed">
 						{ game.Description }

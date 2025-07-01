@@ -4,6 +4,9 @@ import (
 	"context"
 	"log"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/byterotom/infinity-play/config"
 	"github.com/byterotom/infinity-play/internal/auth"
@@ -24,7 +27,18 @@ func main() {
 
 	mux := web.NewInfinityMux(r2, conn)
 
+	srv := &http.Server{
+		Addr:    ":6969",
+		Handler: mux,
+	}
 	log.Println("infinity server running on 6969")
-	http.ListenAndServe(":6969", mux)
+	go srv.ListenAndServe()
+
+	sigChan := make(chan os.Signal, 1)
+	// notify the channel in specified signals
+	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
+	<-sigChan
+
+	srv.Shutdown(ctx)
 
 }

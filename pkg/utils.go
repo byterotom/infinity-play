@@ -25,6 +25,7 @@ func HashWithString(data string) string {
 	return fmt.Sprintf("%x", hash)
 }
 
-func Capital(str string) string {
+func Capital(val any) string {
+	str := fmt.Sprintf("%v", val)
 	return cases.Title(language.English).String(str)
 }

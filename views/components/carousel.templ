@@ -1,24 +1,64 @@
 package components
 
 import (
+	"fmt"
 	"github.com/byterotom/infinity-play/internal/db/dbgen"
 	"github.com/byterotom/infinity-play/pkg"
 )
 
 templ Carousel(category string, games []dbgen.Game) {
-	<div class="mb-10 px-4 text-center">
-		<!-- Category Title -->
-		<h2 class="text-3xl font-bold text-white mb-3 tracking-wide">
+	<div class="mb-10 px-4 text-center relative">
+		<!-- Title -->
+		<h2 class="text-3xl font-bold text-white mb-6 tracking-wide">
 			{ pkg.Capital(category) } Games
 		</h2>
-		<!-- Scrollable Carousel Container -->
-		<div class="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-4 -mx-4 px-4">
-			for _, game := range games {
-				<!-- Snap card into place -->
-				<div class="snap-start flex-shrink-0">
-					@Card(&game)
-				</div>
-			}
+		<!-- Carousel Container -->
+		<div class="relative">
+			<!-- Left Button -->
+			<button
+				id={ fmt.Sprintf("carousel-left-%s", category) }
+				class="opacity-50 absolute left-0 top-0 bottom-0 my-auto h-full w-8 bg-gray-600 bg-opacity-30 text-white text-2xl z-10 hover:bg-opacity-50 flex items-center justify-center"
+			>
+				&#8592;
+			</button>
+			<!-- Carousel Track -->
+			<div
+				id={ fmt.Sprintf("carousel-track-%s", category) }
+				class="flex gap-2 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-4 -mx-4 px-4"
+				style="scrollbar-width: none; -ms-overflow-style: none; overflow-y: hidden;"
+			>
+				<!-- Hide scrollbar (WebKit) -->
+				<style>
+					#carousel-track-{category}::-webkit-scrollbar {
+						display: none;
+					}
+				</style>
+				for _, game := range games {
+					<div class="snap-start flex-shrink-0 w-64">
+						@Card(&game)
+					</div>
+				}
+			</div>
+			<!-- Right Button -->
+			<button
+				id={ fmt.Sprintf("carousel-right-%s", category) }
+				class="opacity-50 absolute right-0 top-0 bottom-0 my-auto h-full w-8 bg-gray-600 bg-opacity-30 text-white text-2xl z-10 hover:bg-opacity-50 flex items-center justify-center"
+			>
+				&#8594;
+			</button>
 		</div>
 	</div>
+	<script>
+	document.addEventListener("DOMContentLoaded", () => {
+		const cat = {{ category }}
+		const track = document.getElementById(`carousel-track-${cat}`);
+		
+		document.getElementById(`carousel-left-${cat}`)?.addEventListener("click", () => {
+			track.scrollBy({ left: -300, behavior: "smooth" });
+		});
+		document.getElementById(`carousel-right-${cat}`)?.addEventListener("click", () => {
+			track.scrollBy({ left: 300, behavior: "smooth" });
+		});
+	});
+</script>
 }

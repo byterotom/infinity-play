@@ -74,7 +74,7 @@ templ UploadGame() {
 			<input
 				name="gif"
 				type="file"
-				accept="image/gif"
+				accept="image/*"
 				required
 				class="block w-full text-sm text-white file:mr-4 file:py-1 file:px-2 file:border file:border-gray-600 file:rounded file:bg-gray-800 file:text-white"
 			/>
@@ -94,7 +94,7 @@ templ UploadGame() {
 		<div>
 			<button
 				type="submit"
-				class="bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded shadow"
+				class="cursor-pointer bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded shadow"
 			>
 				Upload Game
 			</button>

@@ -9,6 +9,7 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
+	"fmt"
 	"github.com/byterotom/infinity-play/internal/db/dbgen"
 	"github.com/byterotom/infinity-play/pkg"
 )
@@ -34,25 +35,51 @@ func Carousel(category string, games []dbgen.Game) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"mb-10 px-4 text-center\"><!-- Category Title --><h2 class=\"text-3xl font-bold text-white mb-3 tracking-wide\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"mb-10 px-4 text-center relative\"><!-- Title --><h2 class=\"text-3xl font-bold text-white mb-6 tracking-wide\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(pkg.Capital(category))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/carousel.templ`, Line: 12, Col: 26}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/carousel.templ`, Line: 13, Col: 26}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, " Games</h2><!-- Scrollable Carousel Container --><div class=\"flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-4 -mx-4 px-4\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, " Games</h2><!-- Carousel Container --><div class=\"relative\"><!-- Left Button --><button id=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var3 string
+		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("carousel-left-%s", category))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/carousel.templ`, Line: 19, Col: 50}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\" class=\"opacity-50 absolute left-0 top-0 bottom-0 my-auto h-full w-8 bg-gray-600 bg-opacity-30 text-white text-2xl z-10 hover:bg-opacity-50 flex items-center justify-center\">&#8592;</button><!-- Carousel Track --><div id=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var4 string
+		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("carousel-track-%s", category))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/carousel.templ`, Line: 26, Col: 51}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\" class=\"flex gap-2 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-4 -mx-4 px-4\" style=\"scrollbar-width: none; -ms-overflow-style: none; overflow-y: hidden;\"><!-- Hide scrollbar (WebKit) --><style>\n\t\t\t\t\t#carousel-track-{category}::-webkit-scrollbar {\n\t\t\t\t\t\tdisplay: none;\n\t\t\t\t\t}\n\t\t\t\t</style>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		for _, game := range games {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<!-- Snap card into place --> <div class=\"snap-start flex-shrink-0\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div class=\"snap-start flex-shrink-0 w-64\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -60,12 +87,37 @@ func Carousel(category string, games []dbgen.Game) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</div><!-- Right Button --><button id=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var5 string
+		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("carousel-right-%s", category))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/carousel.templ`, Line: 44, Col: 51}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" class=\"opacity-50 absolute right-0 top-0 bottom-0 my-auto h-full w-8 bg-gray-600 bg-opacity-30 text-white text-2xl z-10 hover:bg-opacity-50 flex items-center justify-center\">&#8594;</button></div></div><script>\n\tdocument.addEventListener(\"DOMContentLoaded\", () => {\n\t\tconst cat = ")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Var6, templ_7745c5c3_Err := templruntime.ScriptContentOutsideStringLiteral(category)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/carousel.templ`, Line: 53, Col: 25}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var6)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\n\t\tconst track = document.getElementById(`carousel-track-${cat}`);\n\t\t\n\t\tdocument.getElementById(`carousel-left-${cat}`)?.addEventListener(\"click\", () => {\n\t\t\ttrack.scrollBy({ left: -300, behavior: \"smooth\" });\n\t\t});\n\t\tdocument.getElementById(`carousel-right-${cat}`)?.addEventListener(\"click\", () => {\n\t\t\ttrack.scrollBy({ left: 300, behavior: \"smooth\" });\n\t\t});\n\t});\n</script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

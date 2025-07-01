@@ -87,32 +87,70 @@ func Game(game *dbgen.Game) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\" hx-swap=\"none\" onclick=\"handleVote('dislike')\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" style=\"transform: rotate(180deg);\"><path id=\"dislike-icon\" d=\"M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z\" fill=\"white\"></path></svg></button> <button id=\"fullscreenBtn\" class=\"vote-btn cursor-pointer p-2 bg-gray-700 hover:bg-blue-600 text-gray-300 hover:text-white rounded-full transition-all duration-200 border border-gray-600 hover:border-blue-500\"><svg class=\"w-5 h-5\" fill=\"white\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4\"></path></svg></button></div></div><!-- Game Description --><div class=\"bg-gray-700 rounded-lg p-6 border border-gray-600\"><h2 class=\"text-xl font-bold text-white mb-4\">About This Game</h2><p class=\"text-gray-300 leading-relaxed\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\" hx-swap=\"none\" onclick=\"handleVote('dislike')\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" style=\"transform: rotate(180deg);\"><path id=\"dislike-icon\" d=\"M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z\" fill=\"white\"></path></svg></button> <button id=\"fullscreenBtn\" class=\"vote-btn cursor-pointer p-2 bg-gray-700 hover:bg-blue-600 text-gray-300 hover:text-white rounded-full transition-all duration-200 border border-gray-600 hover:border-blue-500\"><svg class=\"w-5 h-5\" fill=\"white\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4\"></path></svg></button></div></div><!-- Game Description --><div class=\"bg-gray-700 rounded-lg p-6 border border-gray-600\"><h2 class=\"text-xl font-bold text-white mb-4\">Rating:  ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var6 string
-		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(game.Description)
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/game.templ`, Line: 76, Col: 24}
+		if game.Votes != 0 {
+			var templ_7745c5c3_Var6 string
+			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%.1f/5.0 (%d votes)", float64(game.Likes*5/game.Votes), game.Votes))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/game.templ`, Line: 77, Col: 92}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		} else {
+			var templ_7745c5c3_Var7 string
+			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("0.0/5.0 (%d votes)", game.Votes))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/game.templ`, Line: 79, Col: 53}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</h2><h2 class=\"text-xl font-bold text-white mb-4\">Technology: ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</p></div></div></div></div><script>\n\n\t\tconst gameId = ")
+		var templ_7745c5c3_Var8 string
+		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(pkg.Capital(game.Technology))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/game.templ`, Line: 82, Col: 93}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Var7, templ_7745c5c3_Err := templruntime.ScriptContentOutsideStringLiteral(game.ID)
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/game.templ`, Line: 84, Col: 27}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var7)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</h2><h2 class=\"text-xl font-bold text-white mb-4\">About This Game</h2><p class=\"text-gray-300 leading-relaxed\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, ";\n\t\tconst voteKey = `infinity_vote_${gameId}`;\n\n\t\tfunction disableButtons() {\n\t\t\tdocument.getElementById('like-btn').disabled = true;\n\t\t\tdocument.getElementById('dislike-btn').disabled = true;\n\t\t}\n\n\t\tfunction handleVote(voteType) {\n\t\t\tlocalStorage.setItem(voteKey, voteType);\n\t\t\tdisableButtons();\n\t\t}\n\n\t\t// Disable buttons on page load if already voted\n\t\tdocument.addEventListener('DOMContentLoaded', function () {\n\t\t\tif (localStorage.getItem(voteKey)) {\n\t\t\t\tdisableButtons();\n\t\t\t}\n\t\t});\n\n\t\tdocument.getElementById('fullscreenBtn').addEventListener('click', function() {\n\t\t\tconst gameContainer = document.getElementById('gameContainer');\n\t\t\tconst gameObject = document.getElementById('gameObject');\n\t\t\t\n\t\t\tif (!document.fullscreenElement) {\n\t\t\t\t// Enter fullscreen\n\t\t\t\tif (gameContainer.requestFullscreen) {\n\t\t\t\t\tgameContainer.requestFullscreen();\n\t\t\t\t} else if (gameContainer.webkitRequestFullscreen) {\n\t\t\t\t\tgameContainer.webkitRequestFullscreen();\n\t\t\t\t} else if (gameContainer.mozRequestFullScreen) {\n\t\t\t\t\tgameContainer.mozRequestFullScreen();\n\t\t\t\t} else if (gameContainer.msRequestFullscreen) {\n\t\t\t\t\tgameContainer.msRequestFullscreen();\n\t\t\t\t}\n\t\t\t\t\n\t\t\t\t// Scale game object to fit fullscreen\n\t\t\t\tgameObject.style.width = '100vw';\n\t\t\t\tgameObject.style.height = '100vh';\n\t\t\t} else {\n\t\t\t\t// Exit fullscreen\n\t\t\t\tif (document.exitFullscreen) {\n\t\t\t\t\tdocument.exitFullscreen();\n\t\t\t\t} else if (document.webkitExitFullscreen) {\n\t\t\t\t\tdocument.webkitExitFullscreen();\n\t\t\t\t} else if (document.mozCancelFullScreen) {\n\t\t\t\t\tdocument.mozCancelFullScreen();\n\t\t\t\t} else if (document.msExitFullscreen) {\n\t\t\t\t\tdocument.msExitFullscreen();\n\t\t\t\t}\n\t\t\t\t\n\t\t\t\t// Reset game object size\n\t\t\t\tgameObject.style.width = '800px';\n\t\t\t\tgameObject.style.height = '500px';\n\t\t\t}\n\t\t});\n\t\t\n\t\t// Handle fullscreen change events\n\t\tdocument.addEventListener('fullscreenchange', handleFullscreenChange);\n\t\tdocument.addEventListener('webkitfullscreenchange', handleFullscreenChange);\n\t\tdocument.addEventListener('mozfullscreenchange', handleFullscreenChange);\n\t\tdocument.addEventListener('msfullscreenchange', handleFullscreenChange);\n\t\t\n\t\tfunction handleFullscreenChange() {\n\t\t\tconst gameObject = document.getElementById('gameObject');\n\t\t\tif (!document.fullscreenElement) {\n\t\t\t\t// Reset size when exiting fullscreen\n\t\t\t\tgameObject.style.width = '800px';\n\t\t\t\tgameObject.style.height = '500px';\n\t\t\t}\n\t\t}\n\t</script>")
+		var templ_7745c5c3_Var9 string
+		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(game.Description)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/game.templ`, Line: 85, Col: 24}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</p></div></div></div></div><script>\n\n\t\tconst gameId = ")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Var10, templ_7745c5c3_Err := templruntime.ScriptContentOutsideStringLiteral(game.ID)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/game.templ`, Line: 93, Col: 27}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var10)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, ";\n\t\tconst voteKey = `infinity_vote_${gameId}`;\n\n\t\tfunction disableButtons() {\n\t\t\tdocument.getElementById('like-btn').disabled = true;\n\t\t\tdocument.getElementById('dislike-btn').disabled = true;\n\t\t}\n\n\t\tfunction handleVote(voteType) {\n\t\t\tlocalStorage.setItem(voteKey, voteType);\n\t\t\tdisableButtons();\n\t\t}\n\n\t\t// Disable buttons on page load if already voted\n\t\tdocument.addEventListener('DOMContentLoaded', function () {\n\t\t\tif (localStorage.getItem(voteKey)) {\n\t\t\t\tdisableButtons();\n\t\t\t}\n\t\t});\n\n\t\tdocument.getElementById('fullscreenBtn').addEventListener('click', function() {\n\t\t\tconst gameContainer = document.getElementById('gameContainer');\n\t\t\tconst gameObject = document.getElementById('gameObject');\n\t\t\t\n\t\t\tif (!document.fullscreenElement) {\n\t\t\t\t// Enter fullscreen\n\t\t\t\tif (gameContainer.requestFullscreen) {\n\t\t\t\t\tgameContainer.requestFullscreen();\n\t\t\t\t} else if (gameContainer.webkitRequestFullscreen) {\n\t\t\t\t\tgameContainer.webkitRequestFullscreen();\n\t\t\t\t} else if (gameContainer.mozRequestFullScreen) {\n\t\t\t\t\tgameContainer.mozRequestFullScreen();\n\t\t\t\t} else if (gameContainer.msRequestFullscreen) {\n\t\t\t\t\tgameContainer.msRequestFullscreen();\n\t\t\t\t}\n\t\t\t\t\n\t\t\t\t// Scale game object to fit fullscreen\n\t\t\t\tgameObject.style.width = '100vw';\n\t\t\t\tgameObject.style.height = '100vh';\n\t\t\t} else {\n\t\t\t\t// Exit fullscreen\n\t\t\t\tif (document.exitFullscreen) {\n\t\t\t\t\tdocument.exitFullscreen();\n\t\t\t\t} else if (document.webkitExitFullscreen) {\n\t\t\t\t\tdocument.webkitExitFullscreen();\n\t\t\t\t} else if (document.mozCancelFullScreen) {\n\t\t\t\t\tdocument.mozCancelFullScreen();\n\t\t\t\t} else if (document.msExitFullscreen) {\n\t\t\t\t\tdocument.msExitFullscreen();\n\t\t\t\t}\n\t\t\t\t\n\t\t\t\t// Reset game object size\n\t\t\t\tgameObject.style.width = '800px';\n\t\t\t\tgameObject.style.height = '500px';\n\t\t\t}\n\t\t});\n\t\t\n\t\t// Handle fullscreen change events\n\t\tdocument.addEventListener('fullscreenchange', handleFullscreenChange);\n\t\tdocument.addEventListener('webkitfullscreenchange', handleFullscreenChange);\n\t\tdocument.addEventListener('mozfullscreenchange', handleFullscreenChange);\n\t\tdocument.addEventListener('msfullscreenchange', handleFullscreenChange);\n\t\t\n\t\tfunction handleFullscreenChange() {\n\t\t\tconst gameObject = document.getElementById('gameObject');\n\t\t\tif (!document.fullscreenElement) {\n\t\t\t\t// Reset size when exiting fullscreen\n\t\t\t\tgameObject.style.width = '800px';\n\t\t\t\tgameObject.style.height = '500px';\n\t\t\t}\n\t\t}\n\t</script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
