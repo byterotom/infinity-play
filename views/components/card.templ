@@ -7,7 +7,13 @@ import (
 )
 
 templ Card(game *dbgen.Game) {
-	<a href={ fmt.Sprintf("/game/%s", game.Name) } class="relative block w-48 h-48 mt-2 group bg-gray-800 rounded-lg overflow-hidden border border-gray-700 hover:border-red-400 transition-all duration-300 hover:scale-105">
+	<button
+		hx-get={ fmt.Sprintf("/game/%s", game.Name) }
+		hx-target="#main-content"
+		hx-swap="innerHTML"
+		hx-push-url="true"
+		class="cursor-pointer relative block w-48 h-48 mt-2 group bg-gray-800 rounded-lg overflow-hidden border border-gray-700 hover:border-red-400 transition-all duration-300 hover:scale-105"
+	>
 		<!-- Image container -->
 		<div class="relative w-full h-40 overflow-hidden">
 			<!-- Static thumbnail image -->
@@ -29,5 +35,5 @@ templ Card(game *dbgen.Game) {
 				{ pkg.Capital(game.Name) }
 			</span>
 		</div>
-	</a>
+	</button>
 }

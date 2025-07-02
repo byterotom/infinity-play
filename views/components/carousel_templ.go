@@ -61,7 +61,7 @@ func Carousel(category string, games []dbgen.Game) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\" class=\"opacity-50 absolute left-0 top-0 bottom-0 my-auto h-full w-8 bg-gray-600 bg-opacity-30 text-white text-2xl z-10 hover:bg-opacity-50 flex items-center justify-center\">&#8592;</button><!-- Carousel Track --><div id=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\" class=\"cursor-pointer opacity-50 absolute left-0 top-0 bottom-0 my-auto h-full w-8 bg-gray-600 bg-opacity-30 text-white text-2xl z-10 hover:bg-opacity-50 flex items-center justify-center\">&#8592;</button><!-- Carousel Track --><div id=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -105,7 +105,7 @@ func Carousel(category string, games []dbgen.Game) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" class=\"opacity-50 absolute right-0 top-0 bottom-0 my-auto h-full w-8 bg-gray-600 bg-opacity-30 text-white text-2xl z-10 hover:bg-opacity-50 flex items-center justify-center\">&#8594;</button></div></div><script>\n\t\tdocument.addEventListener(\"DOMContentLoaded\", () => {\n\t\t\tconst cat = ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" class=\"cursor-pointer opacity-50 absolute right-0 top-0 bottom-0 my-auto h-full w-8 bg-gray-600 bg-opacity-30 text-white text-2xl z-10 hover:bg-opacity-50 flex items-center justify-center\">&#8594;</button></div></div><script>\n\t\tdocument.addEventListener(\"DOMContentLoaded\", () => {\n\t\t\tconst cat = ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -142,6 +142,10 @@ func (mux *GameMux) getGameData(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		return
 	}
+	if pkg.IsHTMXRequest(r) {
+		components.Game(&game).Render(r.Context(), w)
+		return
+	}
 	views.Index(components.Game(&game)).Render(r.Context(), w)
 }
 
@@ -157,7 +161,7 @@ func (mux *GameMux) getGameFile(w http.ResponseWriter, r *http.Request) {
 
 	gameId := r.PathValue("game_id")
 	fileType := r.PathValue("file_type")
-	if fileType != "swf" && fileType != "thumbnail" && fileType != "gif" && fileType != "html"{
+	if fileType != "swf" && fileType != "thumbnail" && fileType != "gif" && fileType != "html" {
 		return
 	}
 
@@ -218,32 +222,6 @@ func (mux *GameMux) deleteGame(w http.ResponseWriter, r *http.Request) {
 	}
 
 	mux.r2.Delete(id)
-}
-
-func (mux *GameMux) searchGame(w http.ResponseWriter, r *http.Request) {
-	ctx := context.TODO()
-
-	var err error
-	defer func() {
-		if err != nil {
-			http.Error(w, err.Error(), 500)
-			return
-		}
-	}()
-
-	pattern := r.URL.Query().Get("q")
-
-	q := dbgen.New(mux.conn)
-
-	games, err := q.GetGamesByPattern(ctx, pattern)
-	if err != nil {
-		return
-	}
-	if r.URL.Query().Get("d") == "1" {
-		components.DelTag(pattern, games).Render(r.Context(), w)
-	} else {
-		views.Index(components.Tag(pattern, true, games)).Render(r.Context(), w)
-	}
 }
 
 func (mux *GameMux) vote(w http.ResponseWriter, r *http.Request) {

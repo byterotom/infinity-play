@@ -7,7 +7,7 @@ templ Index(content templ.Component) {
 		<head>
 			<meta charset="UTF-8"/>
 			<title>Infinity Play</title>
-			<link rel="icon" href="/static/favicon.png">
+			<link rel="icon" href="/static/favicon.png"/>
 			<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
 			<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 			<script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.5/dist/htmx.js" integrity="sha384-5DNWP7/6VfmFjDrEgZ0MwJiuIz0/juUdZwgMAqxCaHBd/BH8MF4yWxDv+mo/o9CG" crossorigin="anonymous"></script>
@@ -15,9 +15,11 @@ templ Index(content templ.Component) {
 		</head>
 		<body class="bg-gray-900">
 			@components.Navbar()
-			if content != nil {
-				@content
-			}
+			<main id="main-content">
+				if content != nil {
+					@content
+				}
+			</main>
 		</body>
 	</html>
 }

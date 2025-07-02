@@ -23,6 +23,7 @@ func NewInfinityMux(r2 *pkg.R2, conn *pgx.Conn, staticFs *embed.FS) http.Handler
 
 	mux.HandleFunc("/", mux.home)
 	mux.HandleFunc("GET /category/{cat}", mux.category)
+	mux.HandleFunc("GET /search", mux.searchGame)
 	mux.Handle("/game/", game.NewGameMux(r2, conn))
 	mux.Handle("/admin/", admin.NewAdminMux(r2, conn))
 

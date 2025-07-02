@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"net/http"
 
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
@@ -28,4 +29,8 @@ func HashWithString(data string) string {
 func Capital(val any) string {
 	str := fmt.Sprintf("%v", val)
 	return cases.Title(language.English).String(str)
+}
+
+func IsHTMXRequest(r *http.Request) bool {
+	return r.Header.Get("HX-Request") == "true"
 }

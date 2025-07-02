@@ -14,6 +14,16 @@ import (
 
 func formHandler(w http.ResponseWriter, r *http.Request) {
 	act := r.PathValue("act")
+	if pkg.IsHTMXRequest(r) {
+		switch act {
+		case "upload-game":
+			components.UploadGame().Render(r.Context(), w)
+		case "delete-game":
+			components.DeleteGame().Render(r.Context(), w)
+		default:
+		}
+		return
+	}
 	views.Index(components.Admin(act)).Render(r.Context(), w)
 }
 

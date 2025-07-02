@@ -1,23 +1,31 @@
 package components
 
+import "fmt"
+
+var buttonStyles map[string]string = map[string]string{
+	"upload-game": "cursor-pointer px-6 py-2 rounded-md bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow-md transition duration-200",
+	"delete-game": "cursor-pointer px-6 py-2 rounded-md bg-red-600 hover:bg-red-700 text-white font-semibold shadow-md transition duration-200",
+}
+
 templ Admin(act string) {
 	<div class="p-6 space-y-6 bg-gray-900 min-h-screen">
 		<!-- Toggle Buttons -->
 		<form method="GET" class="flex gap-4">
-			<button
-				formaction="/admin/upload-game"
-				type="submit"
-				class="cursor-pointer px-6 py-2 rounded-md bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow-md transition duration-200"
-			>
-				Upload Game
-			</button>
-			<button
-				formaction="/admin/delete-game"
-				type="submit"
-				class="cursor-pointer px-6 py-2 rounded-md bg-red-600 hover:bg-red-700 text-white font-semibold shadow-md transition duration-200"
-			>
-				Delete Game
-			</button>
+			for key,val := range buttonStyles {
+				<button
+					hx-get={ fmt.Sprintf("/admin/%s", key) }
+					hx-target="#form-type"
+					hx-swap="innerHTML"
+					hx-push-url="true"
+					class={ val }
+				>
+					if key=="upload-game" {
+						Upload Game
+					} else {
+						Delete Game
+					}
+				</button>
+			}
 			<button
 				formaction="/admin/logout"
 				type="submit"
@@ -27,7 +35,7 @@ templ Admin(act string) {
 			</button>
 		</form>
 		<!-- Action Section -->
-		<div class="mt-6 bg-gray-800 p-6 rounded-lg shadow-inner border border-gray-700">
+		<div id="form-type" class="mt-6 bg-gray-800 p-6 rounded-lg shadow-inner border border-gray-700">
 			switch act {
 				case "delete-game":
 					@DeleteGame()
