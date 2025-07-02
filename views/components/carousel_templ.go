@@ -105,19 +105,19 @@ func Carousel(category string, games []dbgen.Game) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" class=\"opacity-50 absolute right-0 top-0 bottom-0 my-auto h-full w-8 bg-gray-600 bg-opacity-30 text-white text-2xl z-10 hover:bg-opacity-50 flex items-center justify-center\">&#8594;</button></div></div><script>\n\tdocument.addEventListener(\"DOMContentLoaded\", () => {\n\t\tconst cat = ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" class=\"opacity-50 absolute right-0 top-0 bottom-0 my-auto h-full w-8 bg-gray-600 bg-opacity-30 text-white text-2xl z-10 hover:bg-opacity-50 flex items-center justify-center\">&#8594;</button></div></div><script>\n\t\tconst cat = ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Var6, templ_7745c5c3_Err := templruntime.ScriptContentOutsideStringLiteral(category)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/carousel.templ`, Line: 53, Col: 25}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/carousel.templ`, Line: 52, Col: 25}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var6)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\n\t\tconst track = document.getElementById(`carousel-track-${cat}`);\n\t\t\n\t\tdocument.getElementById(`carousel-left-${cat}`)?.addEventListener(\"click\", () => {\n\t\t\ttrack.scrollBy({ left: -300, behavior: \"smooth\" });\n\t\t});\n\t\tdocument.getElementById(`carousel-right-${cat}`)?.addEventListener(\"click\", () => {\n\t\t\ttrack.scrollBy({ left: 300, behavior: \"smooth\" });\n\t\t});\n\t});\n</script>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\n\t</script><script src=\"/static/carousel.js\"></script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

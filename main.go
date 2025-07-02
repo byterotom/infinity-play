@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"embed"
 	"log"
 	"net/http"
 	"os"
@@ -15,6 +16,9 @@ import (
 	"github.com/byterotom/infinity-play/pkg"
 )
 
+//go:embed static/**
+var staticFiles embed.FS
+
 func main() {
 	ctx := context.Background()
 	env := config.LoadConfig()
@@ -25,7 +29,7 @@ func main() {
 
 	auth.JwtSecret = []byte(env.JwtSecret)
 
-	mux := web.NewInfinityMux(r2, conn)
+	mux := web.NewInfinityMux(r2, conn, &staticFiles)
 
 	srv := &http.Server{
 		Addr:    ":6969",

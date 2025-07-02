@@ -31,7 +31,7 @@ func Index(content templ.Component) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<html lang=\"en\"><head><meta charset=\"UTF-8\"><title>Infinity Play</title><link href=\"https://fonts.googleapis.com/icon?family=Material+Icons\" rel=\"stylesheet\"><script src=\"https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4\"></script><script src=\"https://cdn.jsdelivr.net/npm/htmx.org@2.0.5/dist/htmx.js\" integrity=\"sha384-5DNWP7/6VfmFjDrEgZ0MwJiuIz0/juUdZwgMAqxCaHBd/BH8MF4yWxDv+mo/o9CG\" crossorigin=\"anonymous\"></script><script src=\"https://unpkg.com/@ruffle-rs/ruffle\"></script></head><body class=\"bg-gray-900\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<html lang=\"en\"><head><meta charset=\"UTF-8\"><title>Infinity Play</title><link rel=\"icon\" href=\"/static/favicon.png\"><link href=\"https://fonts.googleapis.com/icon?family=Material+Icons\" rel=\"stylesheet\"><script src=\"https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4\"></script><script src=\"https://cdn.jsdelivr.net/npm/htmx.org@2.0.5/dist/htmx.js\" integrity=\"sha384-5DNWP7/6VfmFjDrEgZ0MwJiuIz0/juUdZwgMAqxCaHBd/BH8MF4yWxDv+mo/o9CG\" crossorigin=\"anonymous\"></script><script src=\"https://unpkg.com/@ruffle-rs/ruffle\"></script></head><body class=\"bg-gray-900\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -49,16 +49,16 @@ templ Carousel(category string, games []dbgen.Game) {
 		</div>
 	</div>
 	<script>
-	document.addEventListener("DOMContentLoaded", () => {
-		const cat = {{ category }}
-		const track = document.getElementById(`carousel-track-${cat}`);
-		
-		document.getElementById(`carousel-left-${cat}`)?.addEventListener("click", () => {
-			track.scrollBy({ left: -300, behavior: "smooth" });
+		document.addEventListener("DOMContentLoaded", () => {
+			const cat = {{ category }}
+			const track = document.getElementById(`carousel-track-${cat}`);
+			
+			document.getElementById(`carousel-left-${cat}`)?.addEventListener("click", () => {
+				track.scrollBy({ left: -300, behavior: "smooth" });
+			});
+			document.getElementById(`carousel-right-${cat}`)?.addEventListener("click", () => {
+				track.scrollBy({ left: 300, behavior: "smooth" });
+			});
 		});
-		document.getElementById(`carousel-right-${cat}`)?.addEventListener("click", () => {
-			track.scrollBy({ left: 300, behavior: "smooth" });
-		});
-	});
-</script>
+	</script>
 }

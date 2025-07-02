@@ -28,10 +28,12 @@ templ Admin(act string) {
 		</form>
 		<!-- Action Section -->
 		<div class="mt-6 bg-gray-800 p-6 rounded-lg shadow-inner border border-gray-700">
-			if act == "delete-game" {
-				@DeleteGame()
-			} else if act == "upload-game" {
-				@UploadGame()
+			switch act {
+				case "delete-game":
+					@DeleteGame()
+				case "upload-game":
+					@UploadGame()
+				default:
 			}
 		</div>
 	</div>
