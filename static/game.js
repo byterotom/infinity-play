@@ -10,7 +10,6 @@ function handleVote(voteType) {
     disableButtons();
 }
 
-// Disable buttons on page load if already voted
 document.addEventListener('DOMContentLoaded', function () {
     if (localStorage.getItem(voteKey)) {
         disableButtons();

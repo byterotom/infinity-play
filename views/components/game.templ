@@ -7,6 +7,9 @@ import (
 )
 
 templ Game(game *dbgen.Game) {
+	<script>
+		const gameId = {{ game.ID }};
+	</script>
 	<div class="min-h-screen bg-gray-900 p-6">
 		<div class="max-w-4xl mx-auto">
 			<!-- Game Title -->
@@ -19,21 +22,31 @@ templ Game(game *dbgen.Game) {
 			<div class="bg-gray-800 rounded-lg shadow-2xl p-6 border border-gray-700">
 				<!-- Flash Object Container -->
 				<div class="flex justify-center mb-2" id="gameContainer">
-					<object
-						width="800"
-						height="500"
-						data={ fmt.Sprintf("/game/swf/%s", game.ID) }
-						type="application/x-shockwave-flash"
-						class="border border-gray-600 rounded-lg shadow-lg"
-						id="gameObject"
-					>
-						<param name="wmode" value="transparent"/>
-						<div class="w-[800px] h-[500px] bg-gray-700 rounded-lg flex items-center justify-center border border-gray-600">
-							<p class="text-gray-300 text-center px-4">
-								Flash content not supported. Please enable Flash or use a Flash-compatible browser.
-							</p>
-						</div>
-					</object>
+					if game.Technology==dbgen.TechHtml {
+						<iframe
+							width="800"
+							height="500"
+							class="border border-gray-600 rounded-lg shadow-lg"
+							id="gameObject"
+						></iframe>
+						<script type="module" src="/static/html_handler.js"></script>
+					} else {
+						<object
+							width="800"
+							height="500"
+							data={ fmt.Sprintf("/game/swf/%s", game.ID) }
+							type="application/x-shockwave-flash"
+							class="border border-gray-600 rounded-lg shadow-lg"
+							id="gameObject"
+						>
+							<param name="wmode" value="transparent"/>
+							<div class="w-[800px] h-[500px] bg-gray-700 rounded-lg flex items-center justify-center border border-gray-600">
+								<p class="text-gray-300 text-center px-4">
+									Flash content not supported. Please enable Flash or use a Flash-compatible browser.
+								</p>
+							</div>
+						</object>
+					}
 				</div>
 				<!-- Action Buttons - Below Screen, Bottom Right -->
 				<div class="flex justify-end mb-6">
@@ -88,8 +101,5 @@ templ Game(game *dbgen.Game) {
 			</div>
 		</div>
 	</div>
-	<script>
-		const gameId = {{ game.ID }};
-	</script>
 	<script src="/static/game.js"></script>
 }

@@ -42,9 +42,11 @@ func (mux *GameMux) uploadGame(w http.ResponseWriter, r *http.Request) {
 		}
 		tx.Commit(ctx)
 	}()
+
 	arg.Name = strings.ToLower(r.FormValue("name"))
 	arg.Description = r.FormValue("description")
 	t := r.FormValue("technology")
+
 	if t == "html" {
 		arg.Technology = dbgen.TechHtml
 	} else {
@@ -84,12 +86,19 @@ func (mux *GameMux) uploadGame(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	gameFileKey := fmt.Sprintf("%s/game_file.swf", arg.ID)
+	// game_file upload
+	var gameFileKey string
+	if t == "html" {
+		gameFileKey = fmt.Sprintf("%s/game_file.zip", arg.ID)
+	} else {
+		gameFileKey = fmt.Sprintf("%s/game_file.swf", arg.ID)
+	}
 	err = mux.r2.Upload(gameFileKey, &buf)
 	if err != nil {
 		return
 	}
 
+	// thumbnail upload
 	thumbnail, _, err := r.FormFile("thumbnail")
 	thumbnailKey := fmt.Sprintf("%s/thumbnail", arg.ID)
 	if err != nil {
@@ -100,6 +109,7 @@ func (mux *GameMux) uploadGame(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// gif upload
 	gif, _, err := r.FormFile("gif")
 	gifKey := fmt.Sprintf("%s/gif.gif", arg.ID)
 	if err != nil {
@@ -147,7 +157,7 @@ func (mux *GameMux) getGameFile(w http.ResponseWriter, r *http.Request) {
 
 	gameId := r.PathValue("game_id")
 	fileType := r.PathValue("file_type")
-	if fileType != "swf" && fileType != "thumbnail" && fileType != "gif" {
+	if fileType != "swf" && fileType != "thumbnail" && fileType != "gif" && fileType != "html"{
 		return
 	}
 
@@ -157,6 +167,9 @@ func (mux *GameMux) getGameFile(w http.ResponseWriter, r *http.Request) {
 	case "swf":
 		fileKey = fmt.Sprintf("%s/game_file.swf", gameId)
 		w.Header().Set("Content-Type", "application/x-shockwave-flash")
+	case "html":
+		fileKey = fmt.Sprintf("%s/game_file.zip", gameId)
+		w.Header().Set("Content-Type", "application/zip")
 	case "gif":
 		fileKey = fmt.Sprintf("%s/gif.gif", gameId)
 		w.Header().Set("Content-Type", "image/gif")

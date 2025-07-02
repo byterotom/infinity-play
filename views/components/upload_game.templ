@@ -79,13 +79,14 @@ templ UploadGame() {
 				class="block w-full text-sm text-white file:mr-4 file:py-1 file:px-2 file:border file:border-gray-600 file:rounded file:bg-gray-800 file:text-white"
 			/>
 		</div>
-		<!-- Game file -->
+		<!-- Game file (HTML or SWF based on radio selection) -->
 		<div class="space-y-1">
-			<label class="block text-sm font-medium">Game File (.swf)</label>
+			<label class="block text-sm font-medium">Game File</label>
 			<input
+				id="game-file"
 				name="game_file"
 				type="file"
-				accept=".swf"
+				accept=".zip"
 				required
 				class="block w-full text-sm text-white file:mr-4 file:py-1 file:px-2 file:border file:border-gray-600 file:rounded file:bg-gray-800 file:text-white"
 			/>
@@ -102,4 +103,12 @@ templ UploadGame() {
 	</form>
 	<!-- HTMX response area -->
 	<div id="upload-response" class="mt-4 text-sm text-green-400 text-center"></div>
+	<script>
+		document.querySelectorAll('input[name="technology"]').forEach(radio => {
+			radio.addEventListener('change', () => {
+				const fileInput = document.getElementById('game-file');
+				fileInput.accept = radio.value === 'html' ? '.zip' : '.swf';
+			});
+		});
+	</script>
 }

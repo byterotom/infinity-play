@@ -28,7 +28,10 @@ func NewInfinityMux(r2 *pkg.R2, conn *pgx.Conn, staticFs *embed.FS) http.Handler
 
 	// satic file server
 	fs := http.FileServer(http.FS(staticFs))
-	mux.Handle("/static/", fs)
+	mux.HandleFunc("/static/", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Service-Worker-Allowed", "/")
+		fs.ServeHTTP(w, r)
+	})
 
 	return mux
 }
