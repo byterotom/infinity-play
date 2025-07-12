@@ -9,3 +9,6 @@ templ:
 
 build:
 	@go build -o bin/infinity-play
+
+dev:
+	@psql $${DB_URL} -f dev.sql

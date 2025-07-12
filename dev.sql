@@ -1,0 +1,1 @@
+INSERT INTO admin(username,password,role) VALUES ('infinitymaster','6862bd257eb4f2362a3be537e90c0b00fcabde39b9b9d0852e46875e2a7c06fe','master-admin');
